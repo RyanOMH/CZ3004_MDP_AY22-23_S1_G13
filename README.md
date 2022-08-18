@@ -1,1 +1,3 @@
-# CZ3004_Multi-Disciplinary_Design_Project_AY22-23_Sem1_G13
+# CZ3004 Multi-Disciplinary Design Project
+# Academic Year 22/23 Semester 1
+# Group 13
