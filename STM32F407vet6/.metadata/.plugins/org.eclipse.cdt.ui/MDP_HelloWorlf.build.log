@@ -1,0 +1,10 @@
+08:50:43 **** Incremental Build of configuration Release for project MDP_HelloWorlf ****
+make -j8 all 
+arm-none-eabi-size   MDP_HelloWorlf.elf 
+   text	   data	    bss	    dec	    hex	filename
+   3904	     20	   1572	   5496	   1578	MDP_HelloWorlf.elf
+Finished building: default.size.stdout
+ 
+
+08:50:44 Build Finished. 0 errors, 0 warnings. (took 329ms)
+

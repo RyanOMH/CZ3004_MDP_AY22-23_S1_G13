@@ -1,0 +1,39 @@
+!SESSION 2022-08-18 23:14:00.724 -----------------------------------------------
+eclipse.buildId=Version 1.10.1
+java.version=11.0.14.1
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_SG
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-08-18 23:14:17.586
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-08-18 23:14:17.673
+!MESSAGE Log4j initialized with config file C:\Users\Lewkh\STM32CubeIDE\workspace_1.10.1\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-08-18 23:14:21.591
+!MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2022-08-18 23:26:57.685 -----------------------------------------------
+eclipse.buildId=Version 1.10.1
+java.version=11.0.14.1
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_SG
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-08-18 23:27:16.955
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-08-18 23:27:17.013
+!MESSAGE Log4j initialized with config file C:\Users\Lewkh\STM32CubeIDE\workspace_1.10.1\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-08-18 23:27:20.115
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-08-18 23:36:32.063
+!MESSAGE Indexed 'MDP_HelloWorlf' (19 sources, 81 headers) in 3 sec: 4,376 declarations; 17,598 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0091%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-08-18 23:54:33.392
+!MESSAGE Indexed 'MDP_HelloWorlf' (19 sources, 81 headers) in 1.13 sec: 4,382 declarations; 17,663 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0091%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-08-19 00:38:42.556
+!MESSAGE Indexed 'MDP_HelloWorlf' (19 sources, 82 headers) in 1.04 sec: 4,422 declarations; 17,704 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.009%)
