@@ -102,7 +102,7 @@ void move(float distance , int frontorback, int leftorright);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t aRxBuffer[20];
 /* USER CODE END 0 */
 
 /**
@@ -140,7 +140,7 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
-
+  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,10);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -563,6 +563,56 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void forward_motor_prep()
+{
+	HAL_GPIO_WritePin(GPIOA,AIN2_Pin,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA,AIN1_Pin,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA,BIN2_Pin,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA,BIN1_Pin,GPIO_PIN_SET);
+}
+
+void backward_motor_prep()
+{
+	HAL_GPIO_WritePin(GPIOA,AIN2_Pin,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA,AIN1_Pin,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA,BIN2_Pin,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA,BIN1_Pin,GPIO_PIN_RESET);
+}
+
+void servomotor_center()
+{
+	// default: 150
+	uint32_t value = 150;
+
+	if (htim1.Instance->CCR4 == value){
+		return;
+	}
+	htim1.Instance->CCR4 = value;
+	osDelay(500);
+}
+
+void servomotor_left()
+{
+	// default: 110
+	uint32_t value = 110;
+	if (htim1.Instance->CCR4 == value){
+			return;
+	}
+	htim1.Instance->CCR4 = value;
+	osDelay(500);
+}
+
+void servomotor_right()
+{
+	// default: 210
+	uint32_t value = 210;
+	if (htim1.Instance->CCR4 == value){
+			return;
+	}
+	htim1.Instance->CCR4 = value;
+	osDelay(500);
+}
+
 void move(float distance, int frontorback , int leftorright)
 {
 	//default PWM values
@@ -689,6 +739,12 @@ void move(float distance, int frontorback , int leftorright)
 	HAL_Delay(100);
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	/*PRevent unused argument(s) compilation warning*/
+	UNUSED(huart);
+	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,10,0xFFFF);
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -702,8 +758,12 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
+	uint8_t ch = 'A';
   for(;;)
   {
+	HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
+	if(ch<'Z') ch++;
+	else ch = 'A';
 	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
     osDelay(1000);
   }
