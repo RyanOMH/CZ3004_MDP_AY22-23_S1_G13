@@ -46,6 +46,8 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim8;
 
+UART_HandleTypeDef huart3;
+
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
@@ -85,6 +87,7 @@ static void MX_TIM8_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_USART3_UART_Init(void);
 void StartDefaultTask(void *argument);
 void show(void *argument);
 void Motor(void *argument);
@@ -134,6 +137,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
 
@@ -486,6 +490,39 @@ static void MX_TIM8_Init(void)
 }
 
 /**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -523,56 +560,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-}
-
-void forward_motor_prep()
-{
-	HAL_GPIO_WritePin(GPIOA,AIN2_Pin,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOA,AIN1_Pin,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA,BIN2_Pin,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOA,BIN1_Pin,GPIO_PIN_SET);
-}
-
-void backward_motor_prep()
-{
-	HAL_GPIO_WritePin(GPIOA,AIN2_Pin,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA,AIN1_Pin,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOA,BIN2_Pin,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA,BIN1_Pin,GPIO_PIN_RESET);
-}
-
-void servomotor_center()
-{
-	// default: 150
-	uint32_t value = 150;
-
-	if (htim1.Instance->CCR4 == value){
-		return;
-	}
-	htim1.Instance->CCR4 = value;
-	osDelay(500);
-}
-
-void servomotor_left()
-{
-	// default: 110
-	uint32_t value = 110;
-	if (htim1.Instance->CCR4 == value){
-			return;
-	}
-	htim1.Instance->CCR4 = value;
-	osDelay(500);
-}
-
-void servomotor_right()
-{
-	// default: 210
-	uint32_t value = 210;
-	if (htim1.Instance->CCR4 == value){
-			return;
-	}
-	htim1.Instance->CCR4 = value;
-	osDelay(500);
 }
 
 /* USER CODE BEGIN 4 */
