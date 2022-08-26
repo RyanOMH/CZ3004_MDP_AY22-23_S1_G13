@@ -741,9 +741,21 @@ void move(float distance, int frontorback , int leftorright)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	/*PRevent unused argument(s) compilation warning*/
+	/*Prevent unused argument(s) compilation warning*/
 	UNUSED(huart);
 	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,10,0xFFFF);
+}
+
+void send_UART(char*Tx_str)
+{
+	for(ch=0; ch<sizeof(Tx_str); ch++){
+		HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
+	}
+}
+
+void process_UART_Rx(char*Rx_str)
+{
+
 }
 /* USER CODE END 4 */
 
