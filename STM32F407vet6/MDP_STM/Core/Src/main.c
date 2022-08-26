@@ -743,12 +743,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	/*Prevent unused argument(s) compilation warning*/
 	UNUSED(huart);
-	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,10,0xFFFF);
+//	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,10,0xFFFF);
+	char* cmd = (char*)aRxBuffer;
+
+	if (*cmd == 'w'){
+		move(10, 1, -1);
+	}
+	if (*cmd == 's'){
+		move(10, 0, -1);
+	}
+	if (*cmd == 'a'){
+		move(10, 1, 1);
+	}
+	if (*cmd == 'd'){
+		move(10, 1, 0);
+	}
 }
 
 void send_UART(char*Tx_str)
 {
-	for(ch=0; ch<sizeof(Tx_str); ch++){
+	for(char ch=0; ch<sizeof(Tx_str); ch++){
 		HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
 	}
 }
@@ -792,10 +806,11 @@ void StartDefaultTask(void *argument)
 void show(void *argument)
 {
   /* USER CODE BEGIN show */
-	uint8_t hello[20] = "Hello World!\0";
+//	uint8_t hello[20] = "Hello World!\0";
   /* Infinite loop */
 	for (;;){
-		OLED_ShowString(10,10,hello);
+		OLED_ShowString(10,10,aRxBuffer+'\0');
+//		OLED_ShowString(10,10,hello);
 		OLED_Refresh_Gram();
 	}
   /* USER CODE END show */
