@@ -1167,3 +1167,912 @@ Finished building: MDP_STM.hex
 Finished building: MDP_STM.bin
  
  
+16:07:56 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:143:3: error: too many arguments to function 'HAL_UART_Receive_IT'
+  143 |   HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,4,500); //Receive 4 bytes
+      |   ^~~~~~~~~~~~~~~~~~~
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:407,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:725:19: note: declared here
+  725 | HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size);
+      |                   ^~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:747:2: error: too many arguments to function 'HAL_UART_Receive_IT'
+  747 |  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,4,500);
+      |  ^~~~~~~~~~~~~~~~~~~
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:407,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:725:19: note: declared here
+  725 | HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size);
+      |                   ^~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:877:21: warning: unused variable 'hello2' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:877:11: warning: unused variable 'hello' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:871:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:871:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+16:08:45 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:877:21: warning: unused variable 'hello2' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:877:11: warning: unused variable 'hello' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:871:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:871:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23220	    124	  21772	  45116	   b03c	MDP_STM.elf
+Finished building: MDP_STM.list
+Finished building: default.size.stdout
+ 
+ 
+Finished building: MDP_STM.hex
+ 
+Finished building: MDP_STM.bin
+ 
+16:15:28 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:877:21: warning: unused variable 'hello2' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:877:11: warning: unused variable 'hello' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:871:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:871:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23220	    124	  21772	  45116	   b03c	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.hex
+Finished building: MDP_STM.bin
+ 
+ 
+Finished building: MDP_STM.list
+ 
+16:18:20 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:877:21: warning: unused variable 'hello2' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:877:11: warning: unused variable 'hello' [-Wunused-variable]
+  877 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:871:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:871:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  871 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23220	    124	  21772	  45116	   b03c	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.hex
+ 
+Finished building: MDP_STM.list
+Finished building: MDP_STM.bin
+ 
+ 
+16:24:31 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:876:21: warning: unused variable 'hello2' [-Wunused-variable]
+  876 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:876:11: warning: unused variable 'hello' [-Wunused-variable]
+  876 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:870:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  870 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:870:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  870 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23220	    124	  21772	  45116	   b03c	MDP_STM.elf
+Finished building: default.size.stdout
+Finished building: MDP_STM.hex
+Finished building: MDP_STM.list
+ 
+Finished building: MDP_STM.bin
+ 
+ 
+ 
+16:39:59 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:878:21: warning: unused variable 'hello2' [-Wunused-variable]
+  878 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:878:11: warning: unused variable 'hello' [-Wunused-variable]
+  878 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:872:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  872 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:872:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  872 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23236	    124	  21772	  45132	   b04c	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.hex
+ 
+Finished building: MDP_STM.bin
+ 
+Finished building: MDP_STM.list
+ 
+16:42:36 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:879:21: warning: unused variable 'hello2' [-Wunused-variable]
+  879 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:879:11: warning: unused variable 'hello' [-Wunused-variable]
+  879 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:873:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  873 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:873:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  873 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23236	    124	  21772	  45132	   b04c	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.hex
+ 
+Finished building: MDP_STM.list
+Finished building: MDP_STM.bin
+ 
+ 
+16:44:31 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:879:21: warning: unused variable 'hello2' [-Wunused-variable]
+  879 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:879:11: warning: unused variable 'hello' [-Wunused-variable]
+  879 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:873:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  873 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:873:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  873 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23220	    124	  21772	  45116	   b03c	MDP_STM.elf
+Finished building: default.size.stdout
+Finished building: MDP_STM.bin
+ 
+ 
+Finished building: MDP_STM.hex
+ 
+Finished building: MDP_STM.list
+ 
+16:56:34 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:878:21: warning: unused variable 'hello2' [-Wunused-variable]
+  878 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:878:11: warning: unused variable 'hello' [-Wunused-variable]
+  878 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:872:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  872 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:872:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  872 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23156	    124	  21772	  45052	   affc	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.hex
+ 
+Finished building: MDP_STM.bin
+ 
+Finished building: MDP_STM.list
+ 
+17:03:08 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:731:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  731 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:731:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  731 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:733:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  733 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:733:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  733 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:651:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  651 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:651:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  651 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:891:21: warning: unused variable 'hello2' [-Wunused-variable]
+  891 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:891:11: warning: unused variable 'hello' [-Wunused-variable]
+  891 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:885:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  885 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:885:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  885 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23220	    124	  21772	  45116	   b03c	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.hex
+Finished building: MDP_STM.bin
+ 
+Finished building: MDP_STM.list
+ 
+ 
+17:06:34 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:718:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:718:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  718 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:720:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:720:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  720 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:638:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:638:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  638 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'StartDefaultTask':
+../Core/Src/main.c:803:10: warning: unused variable 'ch' [-Wunused-variable]
+  803 |  uint8_t ch = 'A';
+      |          ^~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:892:21: warning: unused variable 'hello2' [-Wunused-variable]
+  892 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:892:11: warning: unused variable 'hello' [-Wunused-variable]
+  892 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:886:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  886 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:886:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  886 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23156	    124	  21772	  45052	   affc	MDP_STM.elf
+Finished building: MDP_STM.bin
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.list
+ 
+ 
+Finished building: MDP_STM.hex
+ 
+17:13:27 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:719:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  719 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:719:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  719 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:721:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  721 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:721:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  721 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:639:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  639 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:639:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  639 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'process_UART_Rx':
+../Core/Src/main.c:790:6: error: 'i' undeclared (first use in this function)
+  790 |  for(i=0;i<BUFFER_SIZE;i++)
+      |      ^
+../Core/Src/main.c:790:6: note: each undeclared identifier is reported only once for each function it appears in
+../Core/Src/main.c: In function 'StartDefaultTask':
+../Core/Src/main.c:809:10: warning: unused variable 'ch' [-Wunused-variable]
+  809 |  uint8_t ch = 'A';
+      |          ^~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:898:21: warning: unused variable 'hello2' [-Wunused-variable]
+  898 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:898:11: warning: unused variable 'hello' [-Wunused-variable]
+  898 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:892:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  892 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:892:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  892 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+17:13:45 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:719:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  719 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:719:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  719 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:721:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  721 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:721:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  721 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:639:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  639 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:639:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  639 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'StartDefaultTask':
+../Core/Src/main.c:810:10: warning: unused variable 'ch' [-Wunused-variable]
+  810 |  uint8_t ch = 'A';
+      |          ^~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:899:21: warning: unused variable 'hello2' [-Wunused-variable]
+  899 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:899:11: warning: unused variable 'hello' [-Wunused-variable]
+  899 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:893:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  893 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:893:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  893 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23156	    124	  21772	  45052	   affc	MDP_STM.elf
+Finished building: default.size.stdout
+Finished building: MDP_STM.hex
+ 
+ 
+Finished building: MDP_STM.bin
+ 
+Finished building: MDP_STM.list
+ 
+18:06:54 **** Incremental Build of configuration Release for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/ongme/Documents/GitHub/CZ3004_MDP_AY22-23_S1_G13/STM32F407vet6/MDP_STM/PeripheralDriver/Inc" -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:727:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  727 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |            ^~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:727:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+  727 |    sprintf(hello,"SpeedL:%5d\0",diff_left);
+      |                             ^~
+../Core/Src/main.c:729:12: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+  729 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |            ^~~~~~
+      |            |
+      |            uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:26:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:729:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+  729 |    sprintf(hello1,"SpeedR:%5d\0",diff_right);
+      |                              ^~
+../Core/Src/main.c:647:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  647 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:647:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  647 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'StartDefaultTask':
+../Core/Src/main.c:803:10: warning: unused variable 'ch' [-Wunused-variable]
+  803 |  uint8_t ch = 'A';
+      |          ^~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:892:21: warning: unused variable 'hello2' [-Wunused-variable]
+  892 |   uint8_t hello[20],hello2[20];
+      |                     ^~~~~~
+../Core/Src/main.c:892:11: warning: unused variable 'hello' [-Wunused-variable]
+  892 |   uint8_t hello[20],hello2[20];
+      |           ^~~~~
+../Core/Src/main.c:886:37: warning: variable 'diff2' set but not used [-Wunused-but-set-variable]
+  886 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                                     ^~~~~
+../Core/Src/main.c:886:19: warning: variable 'diff' set but not used [-Wunused-but-set-variable]
+  886 |   int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+      |                   ^~~~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23156	    124	  21772	  45052	   affc	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.bin
+ 
+Finished building: MDP_STM.hex
+Finished building: MDP_STM.list
+ 
+ 

@@ -47,6 +47,8 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim8;
 
 UART_HandleTypeDef huart3;
+const int BUFFER_SIZE = 20;
+uint8_t aRxBuffer[20]; //Buffer of 20 bytes
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -96,13 +98,20 @@ void encoder_task(void *argument);
 /* USER CODE BEGIN PFP */
 void forward_motor_prep();
 void backward_motor_prep();
+void servomotor_center();
+void servomotor_left();
+void servomotor_right();
 void move(float distance , int frontorback, int leftorright);
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void send_UART(char*Tx_str);
+void process_UART_Rx();
+
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t aRxBuffer[20];
+
 /* USER CODE END 0 */
 
 /**
@@ -140,7 +149,8 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
-  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,10);
+  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,1); //Receive 1 bytes
+//  HAL_UART_Transmit_IT(&huart3,(uint8_t *)aRxBuffer,10);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -743,7 +753,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	/*Prevent unused argument(s) compilation warning*/
 	UNUSED(huart);
-//	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,10,0xFFFF);
+	HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,1);
+	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,1,0xFFFF);
+}
+
+void send_UART(char*Tx_str)
+{
+	for(char ch=0; ch<sizeof(Tx_str); ch++){
+		HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
+	}
+}
+
+void process_UART_Rx()
+{
 	char* cmd = (char*)aRxBuffer;
 
 	if (*cmd == 'w'){
@@ -758,17 +780,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	if (*cmd == 'd'){
 		move(10, 1, 0);
 	}
-}
-
-void send_UART(char*Tx_str)
-{
-	for(char ch=0; ch<sizeof(Tx_str); ch++){
-		HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
+	int i;
+	for(i=0;i<BUFFER_SIZE;i++)
+	{
+		aRxBuffer[i] = '\0';
 	}
-}
-
-void process_UART_Rx(char*Rx_str)
-{
 
 }
 /* USER CODE END 4 */
@@ -787,11 +803,12 @@ void StartDefaultTask(void *argument)
 	uint8_t ch = 'A';
   for(;;)
   {
-	HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
-	if(ch<'Z') ch++;
-	else ch = 'A';
-	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
-    osDelay(1000);
+//	HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
+//	if(ch<'Z') ch++;
+//	else ch = 'A';
+//	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
+//    osDelay(1000);
+	process_UART_Rx();
   }
   /* USER CODE END 5 */
 }
