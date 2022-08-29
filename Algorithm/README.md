@@ -1,4 +1,4 @@
-# ALgorithm Checklist
+# Algorithm Checklist
 Simulator should include:
 
 ## Robot Movement Area Simulator
