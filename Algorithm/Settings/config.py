@@ -2,9 +2,9 @@ import socket
 
 
 # PyGame settings
-SCALING_FACTOR = 6
+SCALING_FACTOR = 5
 FRAMES = 60
-WINDOW_SIZE = 1200, 1200
+WINDOW_SIZE = 1200, 1000
 
 # Connection to RPi
 RPI_HOST: str = "192.168.8.8"
