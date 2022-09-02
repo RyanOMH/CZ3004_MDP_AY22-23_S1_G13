@@ -41,14 +41,14 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
+
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim8;
 
 UART_HandleTypeDef huart3;
-const int BUFFER_SIZE = 20;
-uint8_t aRxBuffer[20]; //Buffer of 20 bytes
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -78,6 +78,13 @@ const osThreadAttr_t EncoderTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for gyroTask */
+osThreadId_t gyroTaskHandle;
+const osThreadAttr_t gyroTask_attributes = {
+  .name = "gyroTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -90,10 +97,12 @@ static void MX_TIM2_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_USART3_UART_Init(void);
+static void MX_I2C1_Init(void);
 void StartDefaultTask(void *argument);
 void show(void *argument);
 void Motor(void *argument);
 void encoder_task(void *argument);
+void gyro_task(void *argument);
 
 /* USER CODE BEGIN PFP */
 void forward_motor_prep();
@@ -105,13 +114,20 @@ void move(float distance , int frontorback, int leftorright);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void send_UART(char*Tx_str);
 void process_UART_Rx();
+void gyroInit();
+void writeByte(uint8_t addr,uint8_t data);
+void readByte(uint8_t addr, uint8_t* data);
 
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+const int BUFFER_SIZE = 20;
+uint8_t aRxBuffer[20]; //Buffer of 20 bytes
+uint8_t ICM_ADDR = 0x68;
+uint8_t buff[20];
+double total_angle = 0;
 /* USER CODE END 0 */
 
 /**
@@ -147,6 +163,7 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_USART3_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
   HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,1); //Receive 1 bytes
@@ -184,6 +201,9 @@ int main(void)
 
   /* creation of EncoderTask */
   EncoderTaskHandle = osThreadNew(encoder_task, NULL, &EncoderTask_attributes);
+
+  /* creation of gyroTask */
+  gyroTaskHandle = osThreadNew(gyro_task, NULL, &gyroTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -247,6 +267,40 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
 }
 
 /**
@@ -637,7 +691,7 @@ void move(float distance, int frontorback , int leftorright)
 	float temp_rightwheel_dist = 0;
 
 	//number of ticks for one full rotation of wheel
-	float full_rotation_wheel = 1500;
+	float full_rotation_wheel = 1320;
 	float circumference_wheel = 20.4f;
 
 	//store the ticks from each encoder
@@ -787,6 +841,44 @@ void process_UART_Rx()
 	}
 
 }
+
+void gyroInit()
+{
+  writeByte(0x06, 0x00);
+  osDelayUntil(10);
+  writeByte(0x03, 0x80);
+  osDelayUntil(10);
+  writeByte(0x07, 0x07);
+  osDelayUntil(10);
+  writeByte(0x06, 0x01);
+  osDelayUntil(10);
+  writeByte(0x7F, 0x20);
+  osDelayUntil(10);
+  writeByte(0x01, 0x2F); // config gyro, enable gyro, dlpf, set gyro to +-2000dps; gyro lpf = 3'b101
+  osDelayUntil(10);
+  writeByte(0x0, 0x00); // set gyro sample rate divider = 1 + 0(GYRO_SMPLRT_DIV[7:0])
+  osDelayUntil(10);
+  writeByte(0x7F, 0x00);
+  osDelayUntil(10);
+  writeByte(0x07, 0x00);
+  osDelayUntil(10);
+}
+
+void writeByte(uint8_t addr, uint8_t data)
+{
+  buff[0] = addr;
+  buff[1] = data;
+  HAL_I2C_Master_Transmit(&hi2c1, ICM_ADDR<<1, buff, 2, 20);
+}
+
+void readByte(uint8_t addr, uint8_t *data)
+{
+  buff[0] = addr;
+  // Tell we want to read from the register
+  HAL_I2C_Master_Transmit(&hi2c1, ICM_ADDR<<1, buff, 1, 10);
+  // Read 2 byte from z dir register
+  HAL_I2C_Master_Receive(&hi2c1, ICM_ADDR<<1, data, 2, 20);
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -806,8 +898,8 @@ void StartDefaultTask(void *argument)
 //	HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
 //	if(ch<'Z') ch++;
 //	else ch = 'A';
-//	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
-//    osDelay(1000);
+	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
+    osDelay(1000);
 	process_UART_Rx();
   }
   /* USER CODE END 5 */
@@ -854,18 +946,7 @@ void Motor(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		while (test){
-			//first parameter is the distance in cm
-			//second parameter is forward(1) or backwards(0)
-			//third parameter is left(1) or right(0) or center(-1)
-			//i think can replace here with a switch then based on the info send in , it will do whatever it is suppose to do
-			move(100 , 1 , -5); //Move forward(center) for 100cm
-			osDelay(500);
-			test = 0;
 
-		}
-		servomotor_center();
-		osDelay(5000);
 	}
   /* USER CODE END Motor */
 }
@@ -942,6 +1023,63 @@ void encoder_task(void *argument)
 	  osDelay(1);
   }
   /* USER CODE END encoder_task */
+}
+
+/* USER CODE BEGIN Header_gyro_task */
+/**
+* @brief Function implementing the gyroTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_gyro_task */
+void gyro_task(void *argument)
+{
+  /* USER CODE BEGIN gyro_task */
+  /* Infinite loop */
+  for(;;)
+  {
+	  uint8_t val[2] = {0, 0};
+
+	  char hello[20];
+	  int16_t angular_speed = 0;
+
+	  uint32_t tick = 0;
+	  gyroInit();
+	  int dir;
+	  int16_t offset = 0;
+
+	  tick = HAL_GetTick();
+	  osDelayUntil(10);
+
+	  for (;;)
+	  {
+
+	    osDelay(10);
+	    if (HAL_GetTick() - tick >= 100)
+	    {
+	      readByte(0x37, val);
+	      angular_speed = (val[0] << 8) | val[1];
+
+	      total_angle += (double)(angular_speed) * ((HAL_GetTick() - tick) / 16400.0) * 1.42;
+
+	      // prevSpeed = angular_speed;
+	      if (total_angle >= 720)
+	      {
+	        total_angle = 0;
+	      }
+	      if (total_angle <= -720)
+	      {
+	        total_angle = 0;
+	      }
+	      sprintf(hello, "angle %5d \0", (int)(total_angle));
+	      OLED_ShowString(10, 40, hello);
+
+	      tick = HAL_GetTick();
+	    }
+	  }
+    osDelay(1);
+  }
+  /* USER CODE END gyro_task */
 }
 
 /**
