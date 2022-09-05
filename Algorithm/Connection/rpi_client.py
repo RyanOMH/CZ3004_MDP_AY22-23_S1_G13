@@ -15,7 +15,7 @@ class RPiClient:
         self.socket.connect((self.host, self.port))
 
     def send_message(self, obj):
-        self.socket.sendall(pickle.dumps(obj))
+        self.socket.sendall(pickle.dumps(obj))  
 
     def close(self):
         self.socket.close()

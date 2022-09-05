@@ -12,15 +12,17 @@ class RPiServer:
         self.socket = socket.socket()
 
         self.__data = []
-        self.conn, self.address = None, None
+        # conn is a new socket object usable to send and receive data on the connection
+        # address is the address bound to the socket on the other end of the connection
+        self.conn, self.address = None, None  
 
     def start(self):
         print(f"Creating server at {self.host}:{self.port}")
-        self.socket.bind((self.host, self.port))
-        self.socket.listen()
+        self.socket.bind((self.host, self.port))  # Assign IP address and port to socket
+        self.socket.listen()  # Listening mode
         print("Listening for connection...")
 
-        self.conn, self.address = self.socket.accept()
+        self.conn, self.address = self.socket.accept()  # Accept incoming request
         print(f"Connection from {self.address}")
 
     def receive_data(self):
@@ -28,13 +30,13 @@ class RPiServer:
         with self.conn:
             print(f"Connection from {self.address}")
             while True:
-                d = self.conn.recv(1024)
-                if not d:
+                data = self.conn.recv(1024)  
+                if not data:
                     break
-                self.__data.append(d)
+                self.__data.append(data)  
 
-        # This may allow arbitrary code execution. Only connect to trusted connections!!!
-        return pickle.loads(b''.join(self.__data))
+        # This may allow arbitrary code execution. Only connect to trusted connections!
+        return pickle.loads(b''.join(self.__data))  # unpickling
 
     def close(self):
         print("Closing socket.")

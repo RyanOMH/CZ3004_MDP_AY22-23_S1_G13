@@ -29,6 +29,11 @@ def run_simulator():
     app.init()
     app.execute()
 
+    # Send the list of commands over.
+    print("Sending list of commands to RPi...")
+    commands = app.robot.convert_all_commands()
+    print(commands)
+
 
 def run_minimal(also_run_simulator):
     # Create a client to connect to the RPi.

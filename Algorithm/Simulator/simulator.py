@@ -20,9 +20,9 @@ class AlgoApp(ABC):
         self.grid = Grid(obstacles)
         self.robot = Robot(self.grid)
         
-        self.start_button = Button(1000, 420, start_img, 0.8)
-        self.exit_button = Button(1000, 530, exit_img, 0.8)
-        self.reset_button = Button(1000, 800, reset_img, 0.1)
+        self.start_button = Button(1000, 425, start_img, 1)
+        self.exit_button = Button(1000, 920, exit_img, 1)
+        self.reset_button = Button(1000, 551, reset_img, 0.8)
 
     @abstractmethod
     def init(self):
@@ -86,7 +86,7 @@ class AlgoSimulator(AlgoApp):
         self.screen.fill(WHITE, rect=rect_grid)
 
         #Title
-        font1 = pygame.font.SysFont("arial", 24)
+        font1 = pygame.font.SysFont("arial", 26)
         text1 = font1.render("MDP Algorithm Simulator", True, WHITE)
         text_rect1 = text1.get_rect()
         text_rect1 = 1000, 10
