@@ -31,6 +31,7 @@ class Brain:
         def calc_distance(path):
             # Create all target points, including the start.
             targets = [self.robot.pos.xy_pygame()]
+
             for obstacle in path:
                 targets.append(obstacle.pos.xy_pygame())
 
@@ -41,6 +42,7 @@ class Brain:
             return dist
 
         simple = min(perms, key=calc_distance)
+        
         print("Found a simple hamiltonian path:")
         for ob in simple:
             print(f"\t{ob}")

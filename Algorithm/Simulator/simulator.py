@@ -1,4 +1,5 @@
 import pygame
+import time
 from abc import ABC, abstractmethod
 from typing import List
 from Map.obstacle import Obstacle
@@ -12,14 +13,16 @@ from GUI.button import Button
 # Load button images
 start_img = pygame.image.load("Assets/start_btn.png").convert_alpha()
 exit_img = pygame.image.load("Assets/exit_btn.png").convert_alpha()
+reset_img = pygame.image.load("Assets/reset_btn.png").convert_alpha()
 
 class AlgoApp(ABC):
     def __init__(self, obstacles: List[Obstacle]):
         self.grid = Grid(obstacles)
         self.robot = Robot(self.grid)
         
-        self.start_button = Button(1000, 0, start_img, 0.7)
-        self.exit_button = Button(1000, 100, exit_img, 0.7)
+        self.start_button = Button(1000, 420, start_img, 0.8)
+        self.exit_button = Button(1000, 530, exit_img, 0.8)
+        self.reset_button = Button(1000, 800, reset_img, 0.1)
 
     @abstractmethod
     def init(self):
@@ -76,7 +79,18 @@ class AlgoSimulator(AlgoApp):
         """
         Render the screen.
         """
-        self.screen.fill(WHITE, None)
+        rect_outer= pygame.Rect(0, 0, 1300, 1200)
+        self.screen.fill(DARK_BLACK, rect=rect_outer)
+
+        rect_grid = pygame.Rect(0, 0, 1000, 1000)
+        self.screen.fill(WHITE, rect=rect_grid)
+
+        #Title
+        font1 = pygame.font.SysFont("arial", 24)
+        text1 = font1.render("MDP Algorithm Simulator", True, WHITE)
+        text_rect1 = text1.get_rect()
+        text_rect1 = 1000, 10
+        self.screen.blit(text1, text_rect1)
 
         self.grid.draw(self.screen)
         self.robot.draw(self.screen)
@@ -84,11 +98,15 @@ class AlgoSimulator(AlgoApp):
         # Draw start and exit buttons
         if self.start_button.draw():
             # Calculate the path.
+            start = time.time()
             self.robot.brain.plan_path()
-            pygame.display.set_caption("Simulating path!")  # Update the caption once done.
+            print(time.time() - start)
 
         if self.exit_button.draw():
             self.running = False
+
+        if self.reset_button.draw():
+            pass
 
         # Really render now.
         pygame.display.flip()

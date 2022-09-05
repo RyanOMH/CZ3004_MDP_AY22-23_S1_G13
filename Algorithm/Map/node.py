@@ -33,7 +33,7 @@ class Node:
         if self.occupied:  # If current node is not permissible to the robot
             rect = pygame.Rect(0, 0, GRID_CELL_LENGTH, GRID_CELL_LENGTH)
             rect.center = self.pos.xy_pygame()
-            pygame.draw.rect(screen, ORANGE, rect)
+            pygame.draw.rect(screen, DARK_GREY , rect)
 
     def draw_boundary(self, screen):
         x_pygame, y_pygame = self.pos.xy_pygame()

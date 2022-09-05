@@ -22,7 +22,6 @@ class Obstacle:
 
         # Translate given coordinates to be in PyGame coordinates.
         self.pos = Position(x * SCALING_FACTOR, y * SCALING_FACTOR, direction)
-
         # Arrow to draw at the target coordinate.
         self.target_image = pygame.transform.scale(pygame.image.load("Assets/target-arrow.png"),
                                                    (50, 50))
@@ -105,20 +104,20 @@ class Obstacle:
             rect.centerx += OBSTACLE_LENGTH / 4
 
         # Draw the picture place
-        pygame.draw.rect(screen, RED, rect)
+        pygame.draw.rect(screen, GREEN, rect)
 
     def draw_virtual_boundary(self, screen):
         # Get the boundary points
         points = self.get_boundary_points()
 
         # Draw left border
-        pygame.draw.line(screen, BLUE, points[0].xy_pygame(), points[2].xy_pygame())
+        pygame.draw.line(screen, RED, points[0].xy_pygame(), points[2].xy_pygame())
         # Draw right border
-        pygame.draw.line(screen, BLUE, points[1].xy_pygame(), points[3].xy_pygame())
+        pygame.draw.line(screen, RED, points[1].xy_pygame(), points[3].xy_pygame())
         # Draw upper border
-        pygame.draw.line(screen, BLUE, points[2].xy_pygame(), points[3].xy_pygame())
+        pygame.draw.line(screen, RED, points[2].xy_pygame(), points[3].xy_pygame())
         # Draw lower border
-        pygame.draw.line(screen, BLUE, points[0].xy_pygame(), points[1].xy_pygame())
+        pygame.draw.line(screen, RED, points[0].xy_pygame(), points[1].xy_pygame())
 
     def draw_robot_target(self, screen):
         target = self.get_robot_target_pos()
