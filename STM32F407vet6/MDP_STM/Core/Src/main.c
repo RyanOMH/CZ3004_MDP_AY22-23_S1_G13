@@ -103,6 +103,7 @@ void show(void *argument);
 void Motor(void *argument);
 void encoder_task(void *argument);
 void gyro_task(void *argument);
+void PID(int var, int read, int goal);
 
 /* USER CODE BEGIN PFP */
 void forward_motor_prep();
@@ -126,8 +127,14 @@ void readByte(uint8_t addr, uint8_t* data);
 const int BUFFER_SIZE = 20;
 uint8_t aRxBuffer[20]; //Buffer of 20 bytes
 uint8_t ICM_ADDR = 0x68;
-uint8_t buff[20];
+uint8_t buff[20]; //Gyroscope buffer
 double total_angle = 0;
+uint8_t OLED_Row_1[20],OLED_Row_2[20],OLED_Row_3[20],OLED_Row_4[20],OLED_Row_5[20];
+int pwm_L_f, pwm_L_b;
+int pwm_R_f, pwm_R_b;
+int servo_center, servo_left, servo_right;
+int motor_dir; //Backward = -1, Stop = 0, Forward = 1
+int servo_dir; //Left = -1, Center = 0, Right = 1
 /* USER CODE END 0 */
 
 /**
@@ -778,10 +785,10 @@ void move(float distance, int frontorback , int leftorright)
 					diff_right = (65535 - right_encoder_prev);
 				}
 			}
-			sprintf(hello,"SpeedL:%5d\0",diff_left);
-			OLED_ShowString(10,20,hello);
-			sprintf(hello1,"SpeedR:%5d\0",diff_right);
-			OLED_ShowString(10,30,hello1);
+//			sprintf(hello,"SpeedL:%5d\0",diff_left);
+//			OLED_ShowString(10,20,hello);
+//			sprintf(hello1,"SpeedR:%5d\0",diff_right);
+//			OLED_ShowString(10,30,hello1);
 			left_encoder_prev = __HAL_TIM_GET_COUNTER(&htim2);
 			right_encoder_prev = __HAL_TIM_GET_COUNTER(&htim3);
 			start_time = HAL_GetTick(); //tick value in milliseconds
@@ -813,8 +820,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 void send_UART(char*Tx_str)
 {
-	for(char ch=0; ch<sizeof(Tx_str); ch++){
-		HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
+	for(int ch=0; ch<sizeof(Tx_str); ch++){
+		char data = Tx_str[ch];
+		HAL_UART_Transmit(&huart3,(uint8_t *)data,1,0xFFFF);
 	}
 }
 
@@ -892,14 +900,11 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
-	uint8_t ch = 'A';
   for(;;)
   {
-//	HAL_UART_Transmit(&huart3,(uint8_t *)&ch,1,0xFFFF);
-//	if(ch<'Z') ch++;
-//	else ch = 'A';
 	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
-    osDelay(1000);
+	calculate_speed();
+    osDelay(100);
 	process_UART_Rx();
   }
   /* USER CODE END 5 */
@@ -915,11 +920,13 @@ void StartDefaultTask(void *argument)
 void show(void *argument)
 {
   /* USER CODE BEGIN show */
-//	uint8_t hello[20] = "Hello World!\0";
   /* Infinite loop */
 	for (;;){
 		OLED_ShowString(10,10,aRxBuffer+'\0');
-//		OLED_ShowString(10,10,hello);
+		OLED_ShowString(10,20,OLED_Row_2);
+		OLED_ShowString(10,30,OLED_Row_3);
+		OLED_ShowString(10,40,OLED_Row_4);
+		OLED_ShowString(10,50,OLED_Row_5);
 		OLED_Refresh_Gram();
 	}
   /* USER CODE END show */
@@ -964,60 +971,59 @@ void encoder_task(void *argument)
   /* Infinite loop */
   HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL); //activate the encoder for Motor A
   HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL); //activate the encoder for Motor B
-  int cnt1, cnt2, diff, cnt3, cnt4, diff2;
+  int left_prev, left_curr, left_diff, right_prev, right_curr, right_diff;
+  float speed;
   uint32_t tick;
+  //number of ticks for one full rotation of wheel
+  float full_rotation_wheel = 1320;
+  float circumference_wheel = 20.4f;
 
-  cnt1 = __HAL_TIM_GET_COUNTER(&htim2);
-  cnt3 = __HAL_TIM_GET_COUNTER(&htim3);
+  left_prev = __HAL_TIM_GET_COUNTER(&htim2);
+  right_prev = __HAL_TIM_GET_COUNTER(&htim3);
   tick = HAL_GetTick(); //tick value in milliseconds
-  uint8_t hello[20],hello2[20];
-  //uint16_t dir;
+
   for(;;)
   {
-	  if (HAL_GetTick() - tick > 1000L){ //every 1 second
-		  cnt2 = __HAL_TIM_GET_COUNTER(&htim2);
-		  cnt4 = __HAL_TIM_GET_COUNTER(&htim3);
+	  if (HAL_GetTick() - tick > 100L){ //every 1 second
+		  left_curr = __HAL_TIM_GET_COUNTER(&htim2);
+		  right_curr = __HAL_TIM_GET_COUNTER(&htim3);
 		  if(__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim2)){
-			  if(cnt2 < cnt1){
-				  diff = cnt1 - cnt2;
+			  if(left_curr <= left_prev){
+				  left_diff = left_prev - left_curr;
 			  }
 			  else {
-				  diff = (65535 - cnt2) + cnt1; //handle overflow situation
+				  left_diff = (65535 - left_curr) + left_prev; //handle overflow situation
 			  }
 		  }
 		  else {
-			  if(cnt2 > cnt1){
-				  diff = cnt2 - cnt1;
+			  if(left_curr >= left_prev){
+				  left_diff = left_curr - left_prev;
 			  }
 			  else {
-				  diff = (65535 - cnt1) + cnt2;
+				  left_diff = (65535 - left_prev) + left_curr;
 			  }
 		  }
 		  if(__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim3)){
-		  			  if(cnt4 < cnt3){
-		  				  diff2 = cnt3 - cnt4;
-		  			  }
-		  			  else {
-		  				  diff2 = (65535 - cnt4) + cnt3; //handle overflow situation
-		  			  }
-		  		  }
-		  		  else {
-		  			  if(cnt4 > cnt3){
-		  				  diff2 = cnt4 - cnt3;
-		  			  }
-		  			  else {
-		  				  diff2 = (65535 - cnt3) + cnt4;
-		  			  }
-		  		  }
-//		  sprintf(hello, "SpeedA:%5d\0" , diff);
-//		  OLED_ShowString(10,20,hello);
-//		  sprintf(hello2, "SpeedB:%5d\0" , diff2);
-//		  OLED_ShowString(10,40,hello2);
-//		  dir = __HAL_TIM_IS_TIM_COUNTING_DOWN(&htim2);
-//		  sprintf(hello , "DirA:%5d\0" , dir);
-//		  OLED_ShowString(10,30,hello);
-		  cnt1 = __HAL_TIM_GET_COUNTER(&htim2);
-		  cnt3 = __HAL_TIM_GET_COUNTER(&htim3);
+					  if(right_curr <= right_prev){
+						  right_diff = right_prev - right_curr;
+					  }
+					  else {
+						  right_diff = (65535 - right_curr) + right_prev; //handle overflow situation
+					  }
+				  }
+				  else {
+					  if(right_curr >= right_prev){
+						  right_diff = right_curr - right_prev;
+					  }
+					  else {
+						  right_diff = (65535 - right_prev) + right_curr;
+					  }
+				  }
+		  speed = (left_diff+right_diff)/(2*full_rotation_wheel) * circumference_wheel;
+		  sprintf(OLED_Row_2,"SpeedL:%5d\0",left_diff);
+		  sprintf(OLED_Row_3,"SpeedR:%5d\0",right_diff);
+		  left_prev = __HAL_TIM_GET_COUNTER(&htim2);
+		  right_prev = __HAL_TIM_GET_COUNTER(&htim3);
 		  tick = HAL_GetTick(); //tick value in milliseconds
 	  }
 	  osDelay(1);
@@ -1039,8 +1045,6 @@ void gyro_task(void *argument)
   for(;;)
   {
 	  uint8_t val[2] = {0, 0};
-
-	  char hello[20];
 	  int16_t angular_speed = 0;
 
 	  uint32_t tick = 0;
@@ -1071,8 +1075,7 @@ void gyro_task(void *argument)
 	      {
 	        total_angle = 0;
 	      }
-	      sprintf(hello, "angle %5d \0", (int)(total_angle));
-	      OLED_ShowString(10, 40, hello);
+	      sprintf(OLED_Row_5, "Angle %5d \0", (int)(total_angle));
 
 	      tick = HAL_GetTick();
 	    }
