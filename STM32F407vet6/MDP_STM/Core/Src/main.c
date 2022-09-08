@@ -24,7 +24,9 @@
 /* USER CODE BEGIN Includes */
 #include "oled.h"
 #include "PID.h"
+#include "queue.h"
 #include <stdio.h>
+#include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -138,6 +140,7 @@ int motor_dir; //Backward = -1, Stop = 0, Forward = 1
 int servo_dir; //Left = -1, Center = 0, Right = 1
 int angle_dir;
 int left_speed, right_speed;
+Queue command;
 /* USER CODE END 0 */
 
 /**
