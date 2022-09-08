@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "oled.h"
+#include "PID.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -129,12 +130,14 @@ uint8_t aRxBuffer[20]; //Buffer of 20 bytes
 uint8_t ICM_ADDR = 0x68;
 uint8_t buff[20]; //Gyroscope buffer
 double total_angle = 0;
-uint8_t OLED_Row_1[20],OLED_Row_2[20],OLED_Row_3[20],OLED_Row_4[20],OLED_Row_5[20];
+uint8_t OLED_Row_0[20],OLED_Row_1[20],OLED_Row_2[20],OLED_Row_3[20],OLED_Row_4[20],OLED_Row_5[20];
 int pwm_L_f, pwm_L_b;
 int pwm_R_f, pwm_R_b;
 int servo_center, servo_left, servo_right;
 int motor_dir; //Backward = -1, Stop = 0, Forward = 1
 int servo_dir; //Left = -1, Center = 0, Right = 1
+int angle_dir;
+int left_speed, right_speed;
 /* USER CODE END 0 */
 
 /**
@@ -831,23 +834,50 @@ void process_UART_Rx()
 	char* cmd = (char*)aRxBuffer;
 
 	if (*cmd == 'w'){
-		move(10, 1, -1);
+		if (motor_dir != 1 || servo_dir != 0){
+			forward_motor_prep();
+			servomotor_center();
+			motor_dir = 1;
+			servo_dir = 0;
+		}
 	}
 	if (*cmd == 's'){
-		move(10, 0, -1);
+		if (motor_dir != -1 || servo_dir != 0){
+			backward_motor_prep();
+			servomotor_center();
+			motor_dir = -1;
+			servo_dir = 0;
+		}
 	}
 	if (*cmd == 'a'){
-		move(10, 1, 1);
+		if (motor_dir != 1 || servo_dir != -1){
+			forward_motor_prep();
+			servomotor_left();
+			motor_dir = 1;
+			servo_dir = -1;
+		}
 	}
 	if (*cmd == 'd'){
-		move(10, 1, 0);
+		if (motor_dir != 1 || servo_dir != 1){
+			forward_motor_prep();
+			servomotor_right();
+			motor_dir = 1;
+			servo_dir = 1;
+		}
+	}
+	if (*cmd == 'x'){
+		if (motor_dir != 0 || servo_dir != 0){
+			forward_motor_prep();
+			servomotor_center();
+			motor_dir = 0;
+			servo_dir = 0;
+		}
 	}
 	int i;
 	for(i=0;i<BUFFER_SIZE;i++)
 	{
 		aRxBuffer[i] = '\0';
 	}
-
 }
 
 void gyroInit()
@@ -856,17 +886,21 @@ void gyroInit()
   osDelayUntil(10);
   writeByte(0x03, 0x80);
   osDelayUntil(10);
-  writeByte(0x07, 0x07);
+  writeByte(0x07, 0x3F);
   osDelayUntil(10);
   writeByte(0x06, 0x01);
   osDelayUntil(10);
-  writeByte(0x7F, 0x20);
+  writeByte(0x7F, 0x20); // go to bank 2
   osDelayUntil(10);
   writeByte(0x01, 0x2F); // config gyro, enable gyro, dlpf, set gyro to +-2000dps; gyro lpf = 3'b101
   osDelayUntil(10);
-  writeByte(0x0, 0x00); // set gyro sample rate divider = 1 + 0(GYRO_SMPLRT_DIV[7:0])
+  writeByte(0x00, 0x00); // set gyro sample rate divider = 1 + 0(GYRO_SMPLRT_DIV[7:0])
   osDelayUntil(10);
-  writeByte(0x7F, 0x00);
+  writeByte(0x01, 0x2F); // config accel, enable gyro, dlpf, set gyro to +-2000dps; gyro lpf = 3'b101
+  osDelayUntil(10);
+  writeByte(0x00, 0x00); // set gyro sample rate divider = 1 + 0(GYRO_SMPLRT_DIV[7:0])
+  osDelayUntil(10);
+  writeByte(0x7F, 0x00); // return to bank 1
   osDelayUntil(10);
   writeByte(0x07, 0x00);
   osDelayUntil(10);
@@ -903,7 +937,6 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
-	calculate_speed();
     osDelay(100);
 	process_UART_Rx();
   }
@@ -922,7 +955,10 @@ void show(void *argument)
   /* USER CODE BEGIN show */
   /* Infinite loop */
 	for (;;){
-		OLED_ShowString(10,10,aRxBuffer+'\0');
+//		sprintf(OLED_Row_0, "MOTOR:%6d\0", motor_dir);
+//		sprintf(OLED_Row_1, "SERVO:%6d\0", servo_dir);
+		OLED_ShowString(10,0,OLED_Row_0);
+		OLED_ShowString(10,10,OLED_Row_1);
 		OLED_ShowString(10,20,OLED_Row_2);
 		OLED_ShowString(10,30,OLED_Row_3);
 		OLED_ShowString(10,40,OLED_Row_4);
@@ -947,13 +983,59 @@ void Motor(void *argument)
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_1); // MotorA
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_2); // MotorB
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4); // Servo Motor
+	motor_dir = 0; servo_dir = 0;
+	forward_motor_prep();
+	servomotor_center();
 
+	pwm_L_f = 500;
+	pwm_L_b = 500;
+	pwm_R_f = 500;
+	pwm_R_b = 500;
+
+	struct PIDController motor_LF_PID, motor_RF_PID, motor_LB_PID, motor_RB_PID;
+
+	MotorPIDController_Init(&motor_LF_PID);
+	MotorPIDController_Init(&motor_RF_PID);
+	MotorPIDController_Init(&motor_LB_PID);
+	MotorPIDController_Init(&motor_RB_PID);
 	//Make sure the Servo motor position is in middle position
 	servomotor_center();
 	/* Infinite loop */
+	uint32_t tick = HAL_GetTick();
 	for(;;)
-	{
-
+	{	if (HAL_GetTick() - tick > 100L){
+			if (motor_dir == 1){
+				//Start the motor
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_f);
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_f);
+				sprintf(OLED_Row_0, "FRWD\0");
+//				sprintf(OLED_Row_1, "PWML:%5d\0", pwm_L_f);
+//				sprintf(OLED_Row_2, "PWMR:%5d\0", pwm_R_f);
+				//ADD PID CONTROL
+				pwm_L_f = MotorPIDController_Update(&motor_LF_PID, left_speed, 1000, pwm_L_f);
+				pwm_R_f = MotorPIDController_Update(&motor_RF_PID, right_speed, 1000, pwm_R_f);
+			}
+			else if (motor_dir == -1){
+				//Start the motor
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_b);
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_b);
+				sprintf(OLED_Row_0,"BKWD\0");
+//				sprintf(OLED_Row_1, "PWML:%5d\0", pwm_L_b);
+//				sprintf(OLED_Row_2, "PWMR:%5d\0", pwm_R_b);
+				//ADD PID CONTROL
+				pwm_L_b = MotorPIDController_Update(&motor_LB_PID, left_speed, 1000, pwm_L_b);
+				pwm_R_b = MotorPIDController_Update(&motor_RB_PID, right_speed, 1000, pwm_R_b);
+			}
+			else {
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
+				sprintf(OLED_Row_0,"STOP\0");
+//				sprintf(OLED_Row_1, "PWML:%5d\0", 0);
+//				sprintf(OLED_Row_2, "PWMR:%5d\0", 0);
+			}
+			tick = HAL_GetTick();
+		}
+		osDelay(10);
 	}
   /* USER CODE END Motor */
 }
@@ -972,8 +1054,8 @@ void encoder_task(void *argument)
   HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL); //activate the encoder for Motor A
   HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL); //activate the encoder for Motor B
   int left_prev, left_curr, left_diff, right_prev, right_curr, right_diff;
-  float speed;
-  uint32_t tick;
+
+  uint32_t tick, cur_tick, T;
   //number of ticks for one full rotation of wheel
   float full_rotation_wheel = 1320;
   float circumference_wheel = 20.4f;
@@ -984,9 +1066,11 @@ void encoder_task(void *argument)
 
   for(;;)
   {
-	  if (HAL_GetTick() - tick > 100L){ //every 1 second
+	  cur_tick = HAL_GetTick();
+	  if (cur_tick - tick > 100L){ //every 0.1 second
 		  left_curr = __HAL_TIM_GET_COUNTER(&htim2);
 		  right_curr = __HAL_TIM_GET_COUNTER(&htim3);
+		  //Left encoder
 		  if(__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim2)){
 			  if(left_curr <= left_prev){
 				  left_diff = left_prev - left_curr;
@@ -1003,25 +1087,28 @@ void encoder_task(void *argument)
 				  left_diff = (65535 - left_prev) + left_curr;
 			  }
 		  }
+		  //Right encoder
 		  if(__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim3)){
-					  if(right_curr <= right_prev){
-						  right_diff = right_prev - right_curr;
-					  }
-					  else {
-						  right_diff = (65535 - right_curr) + right_prev; //handle overflow situation
-					  }
-				  }
-				  else {
-					  if(right_curr >= right_prev){
-						  right_diff = right_curr - right_prev;
-					  }
-					  else {
-						  right_diff = (65535 - right_prev) + right_curr;
-					  }
-				  }
-		  speed = (left_diff+right_diff)/(2*full_rotation_wheel) * circumference_wheel;
-		  sprintf(OLED_Row_2,"SpeedL:%5d\0",left_diff);
-		  sprintf(OLED_Row_3,"SpeedR:%5d\0",right_diff);
+			  if(right_curr <= right_prev){
+				  right_diff = right_prev - right_curr;
+			  }
+			  else {
+				  right_diff = (65535 - right_curr) + right_prev; //handle overflow situation
+			  }
+		  }
+		  else {
+			  if(right_curr >= right_prev){
+				  right_diff = right_curr - right_prev;
+			  }
+			  else {
+				  right_diff = (65535 - right_prev) + right_curr;
+			  }
+		  }
+		  T = cur_tick - tick;
+		  left_speed = left_diff * (1000/T);
+		  right_speed = right_diff * (1000/T);
+		  sprintf(OLED_Row_3,"SpeedL:%6d\0",left_speed);
+		  sprintf(OLED_Row_4,"SpeedR:%6d\0",right_speed);
 		  left_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		  right_prev = __HAL_TIM_GET_COUNTER(&htim3);
 		  tick = HAL_GetTick(); //tick value in milliseconds
@@ -1049,8 +1136,6 @@ void gyro_task(void *argument)
 
 	  uint32_t tick = 0;
 	  gyroInit();
-	  int dir;
-	  int16_t offset = 0;
 
 	  tick = HAL_GetTick();
 	  osDelayUntil(10);
@@ -1075,7 +1160,7 @@ void gyro_task(void *argument)
 	      {
 	        total_angle = 0;
 	      }
-	      sprintf(OLED_Row_5, "Angle %5d \0", (int)(total_angle));
+	      sprintf(OLED_Row_5, "Angle %5d\0", (int)(total_angle));
 
 	      tick = HAL_GetTick();
 	    }

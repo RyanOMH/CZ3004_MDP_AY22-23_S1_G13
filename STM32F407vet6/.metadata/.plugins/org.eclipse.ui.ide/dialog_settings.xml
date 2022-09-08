@@ -9,6 +9,7 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6"/>
 			<item value="C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM"/>
 			<item value="C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_HelloWorlf"/>
 		</list>
