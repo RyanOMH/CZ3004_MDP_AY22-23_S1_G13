@@ -875,13 +875,13 @@ void process_UART_Rx()
 				servo_dir = 0;
 			}
 		}
-		else if (RX_SERVO == 'L'){
+		if (RX_SERVO == 'L'){
 			if (servo_dir != -1){
 				servomotor_left();
 				servo_dir = -1;
 			}
 		}
-		else if (RX_SERVO == 'R'){
+		if (RX_SERVO == 'R'){
 			if (servo_dir != 1){
 				servomotor_right();
 				servo_dir = 1;
@@ -893,10 +893,10 @@ void process_UART_Rx()
 				servo_dir = 0;
 			}
 		}
-//		for(i=0;i<BUFFER_SIZE;i++)
-//		{
-//			aRxBuffer[i] = '\0';
-//		}
+		for(i=0;i<BUFFER_SIZE;i++)
+		{
+			aRxBuffer[i] = '\0';
+		}
 		RX_FLAG = 0;
 	}
 
