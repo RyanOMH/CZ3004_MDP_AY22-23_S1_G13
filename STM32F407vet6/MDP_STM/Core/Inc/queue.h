@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef INC_Q_H_
-#define INC_Q_H_
+#ifndef INC_QUEUE_H_
+#define INC_QUEUE_H_
 
 typedef struct _command{
 	int direction; // 0-ST,
@@ -34,4 +34,4 @@ void enqueue(Queue *q, Cmd item);
 Cmd dequeue(Queue *q);
 int isEmptyQueue(Queue *s);
 
-#endif /* INC_Q_H_ */
+#endif /* INC_QUEUE_H_ */
