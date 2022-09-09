@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <Q.h>
 #include "main.h"
 #include "cmsis_os.h"
 
@@ -24,7 +25,6 @@
 /* USER CODE BEGIN Includes */
 #include "oled.h"
 #include "PID.h"
-#include "queue.h"
 #include <stdio.h>
 #include <stdlib.h>
 /* USER CODE END Includes */
