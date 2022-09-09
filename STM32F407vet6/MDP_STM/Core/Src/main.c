@@ -144,6 +144,10 @@ int left_speed, right_speed;
 float leftwheel_dist = 0;
 float rightwheel_dist = 0;
 Queue command;
+int RX_FLAG;
+char RX_MOTOR;
+char RX_SERVO;
+int RX_DIST;
 /* USER CODE END 0 */
 
 /**
@@ -182,8 +186,7 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
-  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,1); //Receive 1 bytes
-//  HAL_UART_Transmit_IT(&huart3,(uint8_t *)aRxBuffer,10);
+  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,3); //Receive 3 bytes
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -823,8 +826,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	/*Prevent unused argument(s) compilation warning*/
 	UNUSED(huart);
-	HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,1);
-	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,1,0xFFFF);
+	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,3,0xFFFF);
+	if(RX_FLAG == 0){
+		RX_MOTOR = (char) aRxBuffer[0];
+		RX_SERVO = (char) aRxBuffer[1];
+		RX_DIST = (int) aRxBuffer[2];
+		RX_FLAG = 1;
+	}
+	HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,3);
 }
 
 void send_UART(char*Tx_str)
@@ -837,8 +846,7 @@ void send_UART(char*Tx_str)
 
 void process_UART_Rx()
 {
-	char* cmd = (char*)aRxBuffer;
-
+	int i;
 	if (*cmd == 'w'){
 		if (motor_dir != 1 || servo_dir != 0){
 			forward_motor_prep();
@@ -879,7 +887,7 @@ void process_UART_Rx()
 			servo_dir = 0;
 		}
 	}
-	int i;
+
 	for(i=0;i<BUFFER_SIZE;i++)
 	{
 		aRxBuffer[i] = '\0';
