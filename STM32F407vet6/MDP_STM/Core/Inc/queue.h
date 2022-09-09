@@ -7,7 +7,7 @@
 #define INC_QUEUE_H_
 
 typedef struct _command{
-	char dir;
+	int direction; // 0-ST,
 	int dist;
 } Cmd;
 

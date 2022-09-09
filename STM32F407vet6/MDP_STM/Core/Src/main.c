@@ -121,6 +121,7 @@ void process_UART_Rx();
 void gyroInit();
 void writeByte(uint8_t addr,uint8_t data);
 void readByte(uint8_t addr, uint8_t* data);
+void state_controller(Queue *q);
 
 
 /* USER CODE END PFP */
@@ -885,6 +886,15 @@ void process_UART_Rx()
 	}
 }
 
+void state_controller (Queue *q) {
+	Cmd cur_command;
+	cur_command = q->ll.head->item;
+
+	if (leftwheel_dist >= cur_command.dist || rightwheel_dist >= cur_command.dist){
+
+	}
+}
+
 void gyroInit()
 {
   writeByte(0x06, 0x00);
@@ -981,7 +991,6 @@ void show(void *argument)
 void Motor(void *argument)
 {
   /* USER CODE BEGIN Motor */
-	int test = 1;
 	//start generating PWN signal for me
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_1); // MotorA
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_2); // MotorB
@@ -1026,8 +1035,8 @@ void Motor(void *argument)
 //				sprintf(OLED_Row_1, "PWML:%5d\0", pwm_L_b);
 //				sprintf(OLED_Row_2, "PWMR:%5d\0", pwm_R_b);
 				//ADD PID CONTROL
-				pwm_L_b = MotorPIDController_Update(&motor_LB_PID, left_speed, 4000, pwm_L_b);
-				pwm_R_b = MotorPIDController_Update(&motor_RB_PID, right_speed, 4000, pwm_R_b);
+				pwm_L_b = MotorPIDController_Update(&motor_LB_PID, left_speed, 2000, pwm_L_b);
+				pwm_R_b = MotorPIDController_Update(&motor_RB_PID, right_speed, 2000, pwm_R_b);
 			}
 			else {
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
