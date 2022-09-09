@@ -847,51 +847,59 @@ void send_UART(char*Tx_str)
 void process_UART_Rx()
 {
 	int i;
-	if (*cmd == 'w'){
-		if (motor_dir != 1 || servo_dir != 0){
-			forward_motor_prep();
-			servomotor_center();
-			motor_dir = 1;
-			servo_dir = 0;
+
+	if (RX_FLAG == 1){
+		//Control motor direction
+		if (RX_MOTOR == 'F'){
+			if (motor_dir != 1){
+				forward_motor_prep();
+				motor_dir = 1;
+			}
 		}
-	}
-	if (*cmd == 's'){
-		if (motor_dir != -1 || servo_dir != 0){
-			backward_motor_prep();
-			servomotor_center();
-			motor_dir = -1;
-			servo_dir = 0;
+		else if (RX_MOTOR == 'B'){
+			if (motor_dir != -1){
+				backward_motor_prep();
+				motor_dir = -1;
+			}
 		}
-	}
-	if (*cmd == 'a'){
-		if (motor_dir != 1 || servo_dir != -1){
-			forward_motor_prep();
-			servomotor_left();
-			motor_dir = 1;
-			servo_dir = -1;
+		else {
+			if (motor_dir != 0){
+				forward_motor_prep();
+				motor_dir = 0;
+			}
 		}
-	}
-	if (*cmd == 'd'){
-		if (motor_dir != 1 || servo_dir != 1){
-			forward_motor_prep();
-			servomotor_right();
-			motor_dir = 1;
-			servo_dir = 1;
+		//Control servo direction
+		if (RX_SERVO == 'C'){
+			if (servo_dir != 0){
+				servomotor_center();
+				servo_dir = 0;
+			}
 		}
-	}
-	if (*cmd == 'x'){
-		if (motor_dir != 0 || servo_dir != 0){
-			forward_motor_prep();
-			servomotor_center();
-			motor_dir = 0;
-			servo_dir = 0;
+		if (RX_SERVO == 'L'){
+			if (servo_dir != -1){
+				servomotor_left();
+				servo_dir = -1;
+			}
 		}
+		if (RX_SERVO == 'R'){
+			if (servo_dir != 1){
+				servomotor_right();
+				servo_dir = 1;
+			}
+		}
+		else {
+			if (servo_dir != 0){
+				servomotor_center();
+				servo_dir = 0;
+			}
+		}
+		for(i=0;i<BUFFER_SIZE;i++)
+		{
+			aRxBuffer[i] = '\0';
+		}
+		RX_FLAG = 0;
 	}
 
-	for(i=0;i<BUFFER_SIZE;i++)
-	{
-		aRxBuffer[i] = '\0';
-	}
 }
 
 void state_controller (Queue *q) {
