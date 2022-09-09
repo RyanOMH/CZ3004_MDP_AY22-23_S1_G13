@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef INC_QUEUE_H_
-#define INC_QUEUE_H_
+#ifndef INC_Q_H_
+#define INC_Q_H_
 
 typedef struct _command{
 	int direction; // 0-ST,

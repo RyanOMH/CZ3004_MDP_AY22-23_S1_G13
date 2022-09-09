@@ -20613,3 +20613,475 @@ Finished building: MDP_STM.bin
  
 Finished building: MDP_STM.list
  
+17:17:16 **** Build of configuration Debug for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../PeripheralDriver/Src/oled.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"PeripheralDriver/Src/oled.d" -MT"PeripheralDriver/Src/oled.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "PeripheralDriver/Src/oled.o"
+arm-none-eabi-gcc "../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.d" -MT"Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.o"
+arm-none-eabi-gcc "../Middlewares/Third_Party/FreeRTOS/Source/queue.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Middlewares/Third_Party/FreeRTOS/Source/queue.d" -MT"Middlewares/Third_Party/FreeRTOS/Source/queue.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Middlewares/Third_Party/FreeRTOS/Source/queue.o"
+arm-none-eabi-gcc "../Middlewares/Third_Party/FreeRTOS/Source/timers.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Middlewares/Third_Party/FreeRTOS/Source/timers.d" -MT"Middlewares/Third_Party/FreeRTOS/Source/timers.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Middlewares/Third_Party/FreeRTOS/Source/timers.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o"
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:151:3: error: unknown type name 'QueueHandle_t'
+  151 |   QueueHandle_t xHandle;
+      |   ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:255:32: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  255 | BaseType_t xQueueGenericReset( QueueHandle_t xQueue, BaseType_t xNewQueue )
+      |                                ^~~~~~~~~~~~~
+      |                                xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:310:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  310 |  QueueHandle_t xQueueGenericCreateStatic( const UBaseType_t uxQueueLength, const UBaseType_t uxItemSize, uint8_t *pucQueueStorage, StaticQueue_t *pxStaticQueue, const uint8_t ucQueueType )
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueGenericCreateStatic':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:360:10: warning: returning 'Queue_t *' {aka 'struct QueueDefinition *'} from a function with return type 'int' makes integer from pointer without a cast [-Wint-conversion]
+  360 |   return pxNewQueue;
+      |          ^~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:368:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  368 |  QueueHandle_t xQueueGenericCreate( const UBaseType_t uxQueueLength, const UBaseType_t uxItemSize, const uint8_t ucQueueType )
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueGenericCreate':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:416:10: warning: returning 'Queue_t *' {aka 'struct QueueDefinition *'} from a function with return type 'int' makes integer from pointer without a cast [-Wint-conversion]
+  416 |   return pxNewQueue;
+      |          ^~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'prvInitialiseNewQueue':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:446:11: warning: implicit declaration of function 'xQueueGenericReset'; did you mean 'xQueueGenericCreate'? [-Wimplicit-function-declaration]
+  446 |  ( void ) xQueueGenericReset( pxNewQueue, pdTRUE );
+      |           ^~~~~~~~~~~~~~~~~~
+      |           xQueueGenericCreate
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'prvInitialiseMutex':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:483:13: warning: implicit declaration of function 'xQueueGenericSend'; did you mean 'xQueueGenericCreate'? [-Wimplicit-function-declaration]
+  483 |    ( void ) xQueueGenericSend( pxNewQueue, NULL, ( TickType_t ) 0U, queueSEND_TO_BACK );
+      |             ^~~~~~~~~~~~~~~~~
+      |             xQueueGenericCreate
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:483:69: error: 'queueSEND_TO_BACK' undeclared (first use in this function)
+  483 |    ( void ) xQueueGenericSend( pxNewQueue, NULL, ( TickType_t ) 0U, queueSEND_TO_BACK );
+      |                                                                     ^~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:483:69: note: each undeclared identifier is reported only once for each function it appears in
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:496:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  496 |  QueueHandle_t xQueueCreateMutex( const uint8_t ucQueueType )
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueCreateMutex':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:498:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  498 |  QueueHandle_t xNewQueue;
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:512:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  512 |  QueueHandle_t xQueueCreateMutexStatic( const uint8_t ucQueueType, StaticQueue_t *pxStaticQueue )
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueCreateMutexStatic':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:514:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  514 |  QueueHandle_t xNewQueue;
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:532:37: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  532 |  TaskHandle_t xQueueGetMutexHolder( QueueHandle_t xSemaphore )
+      |                                     ^~~~~~~~~~~~~
+      |                                     xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:563:44: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  563 |  TaskHandle_t xQueueGetMutexHolderFromISR( QueueHandle_t xSemaphore )
+      |                                            ^~~~~~~~~~~~~
+      |                                            xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:589:39: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  589 |  BaseType_t xQueueGiveMutexRecursive( QueueHandle_t xMutex )
+      |                                       ^~~~~~~~~~~~~
+      |                                       xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:644:39: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  644 |  BaseType_t xQueueTakeMutexRecursive( QueueHandle_t xMutex, TickType_t xTicksToWait )
+      |                                       ^~~~~~~~~~~~~
+      |                                       xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:686:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  686 |  QueueHandle_t xQueueCreateCountingSemaphoreStatic( const UBaseType_t uxMaxCount, const UBaseType_t uxInitialCount, StaticQueue_t *pxStaticQueue )
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueCreateCountingSemaphoreStatic':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:688:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  688 |  QueueHandle_t xHandle;
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:693:107: error: 'queueQUEUE_TYPE_COUNTING_SEMAPHORE' undeclared (first use in this function); did you mean 'traceCREATE_COUNTING_SEMAPHORE'?
+  693 |   xHandle = xQueueGenericCreateStatic( uxMaxCount, queueSEMAPHORE_QUEUE_ITEM_LENGTH, NULL, pxStaticQueue, queueQUEUE_TYPE_COUNTING_SEMAPHORE );
+      |                                                                                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                           traceCREATE_COUNTING_SEMAPHORE
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:695:15: warning: comparison between pointer and integer
+  695 |   if( xHandle != NULL )
+      |               ^~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:714:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  714 |  QueueHandle_t xQueueCreateCountingSemaphore( const UBaseType_t uxMaxCount, const UBaseType_t uxInitialCount )
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueCreateCountingSemaphore':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:716:2: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  716 |  QueueHandle_t xHandle;
+      |  ^~~~~~~~~~~~~
+      |  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:721:80: error: 'queueQUEUE_TYPE_COUNTING_SEMAPHORE' undeclared (first use in this function); did you mean 'traceCREATE_COUNTING_SEMAPHORE'?
+  721 |   xHandle = xQueueGenericCreate( uxMaxCount, queueSEMAPHORE_QUEUE_ITEM_LENGTH, queueQUEUE_TYPE_COUNTING_SEMAPHORE );
+      |                                                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                traceCREATE_COUNTING_SEMAPHORE
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:723:15: warning: comparison between pointer and integer
+  723 |   if( xHandle != NULL )
+      |               ^~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:740:31: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  740 | BaseType_t xQueueGenericSend( QueueHandle_t xQueue, const void * const pvItemToQueue, TickType_t xTicksToWait, const BaseType_t xCopyPosition )
+      |                               ^~~~~~~~~~~~~
+      |                               xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:950:38: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+  950 | BaseType_t xQueueGenericSendFromISR( QueueHandle_t xQueue, const void * const pvItemToQueue, BaseType_t * const pxHigherPriorityTaskWoken, const BaseType_t xCopyPosition )
+      |                                      ^~~~~~~~~~~~~
+      |                                      xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1112:31: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 1112 | BaseType_t xQueueGiveFromISR( QueueHandle_t xQueue, BaseType_t * const pxHigherPriorityTaskWoken )
+      |                               ^~~~~~~~~~~~~
+      |                               xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1277:27: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 1277 | BaseType_t xQueueReceive( QueueHandle_t xQueue, void * const pvBuffer, TickType_t xTicksToWait )
+      |                           ^~~~~~~~~~~~~
+      |                           xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1418:33: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 1418 | BaseType_t xQueueSemaphoreTake( QueueHandle_t xQueue, TickType_t xTicksToWait )
+      |                                 ^~~~~~~~~~~~~
+      |                                 xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1636:24: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 1636 | BaseType_t xQueuePeek( QueueHandle_t xQueue, void * const pvBuffer, TickType_t xTicksToWait )
+      |                        ^~~~~~~~~~~~~
+      |                        xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1785:34: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 1785 | BaseType_t xQueueReceiveFromISR( QueueHandle_t xQueue, void * const pvBuffer, BaseType_t * const pxHigherPriorityTaskWoken )
+      |                                  ^~~~~~~~~~~~~
+      |                                  xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1876:31: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 1876 | BaseType_t xQueuePeekFromISR( QueueHandle_t xQueue,  void * const pvBuffer )
+      |                               ^~~~~~~~~~~~~
+      |                               xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1930:43: error: unknown type name 'QueueHandle_t'
+ 1930 | UBaseType_t uxQueueMessagesWaiting( const QueueHandle_t xQueue )
+      |                                           ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:141:24: error: unknown type name 'QueueHandle_t'
+  141 | PRIVILEGED_DATA static QueueHandle_t xTimerQueue = NULL;
+      |                        ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:141:52: warning: initialization of 'int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+  141 | PRIVILEGED_DATA static QueueHandle_t xTimerQueue = NULL;
+      |                                                    ^~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1946:43: error: unknown type name 'QueueHandle_t'
+ 1946 | UBaseType_t uxQueueSpacesAvailable( const QueueHandle_t xQueue )
+      |                                           ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'uxQueueSpacesAvailable':
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c: In function 'xTimerCreateTimerTask':
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:237:18: warning: comparison between pointer and integer
+  237 |  if( xTimerQueue != NULL )
+      |                  ^~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1949:27: warning: initialization of 'Queue_t * const' {aka 'struct QueueDefinition * const'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 1949 | Queue_t * const pxQueue = xQueue;
+      |                           ^~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1963:50: error: unknown type name 'QueueHandle_t'
+ 1963 | UBaseType_t uxQueueMessagesWaitingFromISR( const QueueHandle_t xQueue )
+      |                                                  ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'uxQueueMessagesWaitingFromISR':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1966:27: warning: initialization of 'Queue_t * const' {aka 'struct QueueDefinition * const'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 1966 | Queue_t * const pxQueue = xQueue;
+      |                           ^~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c: In function 'xTimerGenericCommand':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:390:18: warning: comparison between pointer and integer
+  390 |  if( xTimerQueue != NULL )
+      |                  ^~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:1975:20: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 1975 | void vQueueDelete( QueueHandle_t xQueue )
+      |                    ^~~~~~~~~~~~~
+      |                    xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2019:37: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 2019 |  UBaseType_t uxQueueGetQueueNumber( QueueHandle_t xQueue )
+      |                                     ^~~~~~~~~~~~~
+      |                                     xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2029:29: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 2029 |  void vQueueSetQueueNumber( QueueHandle_t xQueue, UBaseType_t uxQueueNumber )
+      |                             ^~~~~~~~~~~~~
+      |                             xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2039:31: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 2039 |  uint8_t ucQueueGetQueueType( QueueHandle_t xQueue )
+      |                               ^~~~~~~~~~~~~
+      |                               xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'prvCopyDataToQueue':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2100:24: error: 'queueSEND_TO_BACK' undeclared (first use in this function)
+ 2100 |  else if( xPosition == queueSEND_TO_BACK )
+      |                        ^~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2126:20: error: 'queueOVERWRITE' undeclared (first use in this function)
+ 2126 |   if( xPosition == queueOVERWRITE )
+      |                    ^~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2312:45: error: unknown type name 'QueueHandle_t'
+ 2312 | BaseType_t xQueueIsQueueEmptyFromISR( const QueueHandle_t xQueue )
+      |                                             ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueIsQueueEmptyFromISR':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2315:27: warning: initialization of 'Queue_t * const' {aka 'struct QueueDefinition * const'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 2315 | Queue_t * const pxQueue = xQueue;
+      |                           ^~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2352:44: error: unknown type name 'QueueHandle_t'
+ 2352 | BaseType_t xQueueIsQueueFullFromISR( const QueueHandle_t xQueue )
+      |                                            ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: In function 'xQueueIsQueueFullFromISR':
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2355:27: warning: initialization of 'Queue_t * const' {aka 'struct QueueDefinition * const'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 2355 | Queue_t * const pxQueue = xQueue;
+      |                           ^~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c: At top level:
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2648:28: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 2648 |  void vQueueAddToRegistry( QueueHandle_t xQueue, const char *pcQueueName ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+      |                            ^~~~~~~~~~~~~
+      |                            xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2677:30: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 2677 |  const char *pcQueueGetName( QueueHandle_t xQueue ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+      |                              ^~~~~~~~~~~~~
+      |                              xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2705:30: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 2705 |  void vQueueUnregisterQueue( QueueHandle_t xQueue )
+      |                              ^~~~~~~~~~~~~
+      |                              xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2737:39: error: unknown type name 'QueueHandle_t'; did you mean 'xQueueHandle'?
+ 2737 |  void vQueueWaitForMessageRestricted( QueueHandle_t xQueue, TickType_t xTicksToWait, const BaseType_t xWaitIndefinitely )
+      |                                       ^~~~~~~~~~~~~
+      |                                       xQueueHandle
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2331:19: warning: 'prvIsQueueFull' defined but not used [-Wunused-function]
+ 2331 | static BaseType_t prvIsQueueFull( const Queue_t *pxQueue )
+      |                   ^~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2291:19: warning: 'prvIsQueueEmpty' defined but not used [-Wunused-function]
+ 2291 | static BaseType_t prvIsQueueEmpty( const Queue_t *pxQueue )
+      |                   ^~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2171:13: warning: 'prvUnlockQueue' defined but not used [-Wunused-function]
+ 2171 | static void prvUnlockQueue( Queue_t * const pxQueue )
+      |             ^~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2153:13: warning: 'prvCopyDataFromQueue' defined but not used [-Wunused-function]
+ 2153 | static void prvCopyDataFromQueue( Queue_t * const pxQueue, void * const pvBuffer )
+      |             ^~~~~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2074:19: warning: 'prvCopyDataToQueue' defined but not used [-Wunused-function]
+ 2074 | static BaseType_t prvCopyDataToQueue( Queue_t * const pxQueue, const void *pvItemToQueue, const BaseType_t xPosition )
+      |                   ^~~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c:2049:21: warning: 'prvGetDisinheritPriorityAfterTimeout' defined but not used [-Wunused-function]
+ 2049 |  static UBaseType_t prvGetDisinheritPriorityAfterTimeout( const Queue_t * const pxQueue )
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:401:15: warning: implicit declaration of function 'xQueueSendToBack' [-Wimplicit-function-declaration]
+  401 |     xReturn = xQueueSendToBack( xTimerQueue, &xMessage, xTicksToWait );
+      |               ^~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:410:14: warning: implicit declaration of function 'xQueueSendToBackFromISR' [-Wimplicit-function-declaration]
+  410 |    xReturn = xQueueSendToBackFromISR( xTimerQueue, &xMessage, pxHigherPriorityTaskWoken );
+      |              ^~~~~~~~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c: In function 'prvProcessTimerOrBlockTask':
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:620:5: warning: implicit declaration of function 'vQueueWaitForMessageRestricted' [-Wimplicit-function-declaration]
+  620 |     vQueueWaitForMessageRestricted( xTimerQueue, ( xNextExpireTime - xTimeNow ), xListWasEmpty );
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c: In function 'prvProcessReceivedCommands':
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:741:9: warning: implicit declaration of function 'xQueueReceive' [-Wimplicit-function-declaration]
+  741 |  while( xQueueReceive( xTimerQueue, &xMessage, tmrNO_DELAY ) != pdFAIL ) /*lint !e603 xMessage does not have to be initialised as it is passed out, not in, and it is not used unless xQueueReceive() returns pdTRUE. */
+      |         ^~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c: In function 'prvCheckForValidListAndQueue':
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:948:19: warning: comparison between pointer and integer
+  948 |   if( xTimerQueue == NULL )
+      |                   ^~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:962:19: warning: implicit declaration of function 'xQueueCreateStatic'; did you mean 'xTimerCreateStatic'? [-Wimplicit-function-declaration]
+  962 |     xTimerQueue = xQueueCreateStatic( ( UBaseType_t ) configTIMER_QUEUE_LENGTH, ( UBaseType_t ) sizeof( DaemonTaskMessage_t ), &( ucStaticTimerQueueStorage[ 0 ] ), &xStaticTimerQueue );
+      |                   ^~~~~~~~~~~~~~~~~~
+      |                   xTimerCreateStatic
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:972:21: warning: comparison between pointer and integer
+  972 |     if( xTimerQueue != NULL )
+      |                     ^~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:974:6: warning: implicit declaration of function 'vQueueAddToRegistry' [-Wimplicit-function-declaration]
+  974 |      vQueueAddToRegistry( xTimerQueue, "TmrQ" );
+      |      ^~~~~~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c: In function 'xTimerPendFunctionCallFromISR':
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c:1062:13: warning: implicit declaration of function 'xQueueSendFromISR' [-Wimplicit-function-declaration]
+ 1062 |   xReturn = xQueueSendFromISR( xTimerQueue, &xMessage, pxHigherPriorityTaskWoken );
+      |             ^~~~~~~~~~~~~~~~~
+make: *** [Middlewares/Third_Party/FreeRTOS/Source/subdir.mk:37: Middlewares/Third_Party/FreeRTOS/Source/queue.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [Middlewares/Third_Party/FreeRTOS/Source/subdir.mk:37: Middlewares/Third_Party/FreeRTOS/Source/timers.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+17:18:14 **** Incremental Build of configuration Debug for project MDP_STM ****
+make -j12 all 
+arm-none-eabi-gcc "../Middlewares/Third_Party/FreeRTOS/Source/queue.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Middlewares/Third_Party/FreeRTOS/Source/queue.d" -MT"Middlewares/Third_Party/FreeRTOS/Source/queue.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Middlewares/Third_Party/FreeRTOS/Source/queue.o"
+arm-none-eabi-gcc "../Middlewares/Third_Party/FreeRTOS/Source/timers.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Middlewares/Third_Party/FreeRTOS/Source/timers.d" -MT"Middlewares/Third_Party/FreeRTOS/Source/timers.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Middlewares/Third_Party/FreeRTOS/Source/timers.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o"
+arm-none-eabi-gcc "../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.d" -MT"Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o"
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f407vetx.d" -MT"Core/Startup/startup_stm32f407vetx.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Startup/startup_stm32f407vetx.o" "../Core/Startup/startup_stm32f407vetx.s"
+arm-none-eabi-gcc "../Core/Src/PID.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/PID.d" -MT"Core/Src/PID.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/PID.o"
+arm-none-eabi-gcc "../Core/Src/Q.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/Q.d" -MT"Core/Src/Q.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/Q.o"
+arm-none-eabi-gcc "../Core/Src/freertos.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/freertos.d" -MT"Core/Src/freertos.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/freertos.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/stm32f4xx_hal_msp.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/stm32f4xx_hal_msp.d" -MT"Core/Src/stm32f4xx_hal_msp.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f4xx_hal_msp.o"
+arm-none-eabi-gcc "../Core/Src/stm32f4xx_it.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/stm32f4xx_it.d" -MT"Core/Src/stm32f4xx_it.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f4xx_it.o"
+arm-none-eabi-gcc "../Core/Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/syscalls.d" -MT"Core/Src/syscalls.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/syscalls.o"
+arm-none-eabi-gcc "../Core/Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/sysmem.d" -MT"Core/Src/sysmem.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/sysmem.o"
+arm-none-eabi-gcc "../Core/Src/system_stm32f4xx.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/system_stm32f4xx.d" -MT"Core/Src/system_stm32f4xx.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/system_stm32f4xx.o"
+../Core/Src/main.c: In function 'move':
+../Core/Src/main.c:749:21: warning: unused variable 'hello1' [-Wunused-variable]
+  749 |  uint8_t hello[20], hello1[20];
+      |                     ^~~~~~
+../Core/Src/main.c:749:10: warning: unused variable 'hello' [-Wunused-variable]
+  749 |  uint8_t hello[20], hello1[20];
+      |          ^~~~~
+../Core/Src/main.c:720:35: warning: unused variable 'curr_time' [-Wunused-variable]
+  720 |  uint32_t start_time , prev_time, curr_time;
+      |                                   ^~~~~~~~~
+../Core/Src/main.c:720:24: warning: variable 'prev_time' set but not used [-Wunused-but-set-variable]
+  720 |  uint32_t start_time , prev_time, curr_time;
+      |                        ^~~~~~~~~
+../Core/Src/main.c: In function 'send_UART':
+../Core/Src/main.c:843:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  843 |   HAL_UART_Transmit(&huart3,(uint8_t *)data,1,0xFFFF);
+      |                             ^
+../Core/Src/main.c: In function 'process_UART_Rx':
+../Core/Src/main.c:849:6: warning: unused variable 'i' [-Wunused-variable]
+  849 |  int i;
+      |      ^
+../Core/Src/main.c: In function 'Motor':
+../Core/Src/main.c:1039:13: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1039 |     sprintf(OLED_Row_0, "FRWD\0");
+      |             ^~~~~~~~~~
+      |             |
+      |             uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1039:30: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1039 |     sprintf(OLED_Row_0, "FRWD\0");
+      |                              ^~
+../Core/Src/main.c:1050:13: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1050 |     sprintf(OLED_Row_0,"BKWD\0");
+      |             ^~~~~~~~~~
+      |             |
+      |             uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1050:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1050 |     sprintf(OLED_Row_0,"BKWD\0");
+      |                             ^~
+../Core/Src/main.c:1060:13: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1060 |     sprintf(OLED_Row_0,"STOP\0");
+      |             ^~~~~~~~~~
+      |             |
+      |             uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1060:29: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1060 |     sprintf(OLED_Row_0,"STOP\0");
+      |                             ^~
+../Core/Src/main.c: In function 'encoder_task':
+../Core/Src/main.c:1148:13: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1148 |     sprintf(OLED_Row_3,"SPD L: %6d\0",left_speed);
+      |             ^~~~~~~~~~
+      |             |
+      |             uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1148:35: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1148 |     sprintf(OLED_Row_3,"SPD L: %6d\0",left_speed);
+      |                                   ^~
+../Core/Src/main.c:1149:13: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1149 |     sprintf(OLED_Row_4,"SPD R: %6d\0",right_speed);
+      |             ^~~~~~~~~~
+      |             |
+      |             uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1149:35: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1149 |     sprintf(OLED_Row_4,"SPD R: %6d\0",right_speed);
+      |                                   ^~
+../Core/Src/main.c:1160:13: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1160 |     sprintf(OLED_Row_1, "DST L: %6d\0", distInt_L);
+      |             ^~~~~~~~~~
+      |             |
+      |             uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1160:36: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1160 |     sprintf(OLED_Row_1, "DST L: %6d\0", distInt_L);
+      |                                    ^~
+../Core/Src/main.c:1161:13: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1161 |     sprintf(OLED_Row_2, "DST R: %6d\0", distInt_R);
+      |             ^~~~~~~~~~
+      |             |
+      |             uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1161:36: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1161 |     sprintf(OLED_Row_2, "DST R: %6d\0", distInt_R);
+      |                                    ^~
+../Core/Src/main.c:1094:9: warning: unused variable 'circumference_wheel' [-Wunused-variable]
+ 1094 |   float circumference_wheel = 21.3f;
+      |         ^~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:1093:9: warning: unused variable 'full_rotation_wheel' [-Wunused-variable]
+ 1093 |   float full_rotation_wheel = 1550;
+      |         ^~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:1089:9: warning: unused variable 'temp_rightwheel_dist' [-Wunused-variable]
+ 1089 |   float temp_rightwheel_dist = 0;
+      |         ^~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:1088:9: warning: unused variable 'temp_leftwheel_dist' [-Wunused-variable]
+ 1088 |   float temp_leftwheel_dist = 0;
+      |         ^~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'gyro_task':
+../Core/Src/main.c:1215:16: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness [-Wpointer-sign]
+ 1215 |        sprintf(OLED_Row_5, "ANGLE: %6d\0", (int)(total_angle));
+      |                ^~~~~~~~~~
+      |                |
+      |                uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:28:
+c:\st\stm32cubeide_1.10.1\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\include\stdio.h:244:14: note: expected 'char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  244 | int sprintf (char *__restrict, const char *__restrict, ...)
+      |              ^
+../Core/Src/main.c:1215:39: warning: embedded '\0' in format [-Wformat-contains-nul]
+ 1215 |        sprintf(OLED_Row_5, "ANGLE: %6d\0", (int)(total_angle));
+      |                                       ^~
+arm-none-eabi-gcc -o "MDP_STM.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ongme\Documents\GitHub\CZ3004_MDP_AY22-23_S1_G13\STM32F407vet6\MDP_STM\STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MDP_STM.elf
+ 
+arm-none-eabi-size   MDP_STM.elf 
+arm-none-eabi-objdump -h -S  MDP_STM.elf  > "MDP_STM.list"
+arm-none-eabi-objcopy  -O ihex  MDP_STM.elf  "MDP_STM.hex"
+arm-none-eabi-objcopy  -O binary  MDP_STM.elf  "MDP_STM.bin"
+   text	   data	    bss	    dec	    hex	filename
+  44468	    128	  22056	  66652	  1045c	MDP_STM.elf
+Finished building: default.size.stdout
+ 
+Finished building: MDP_STM.bin
+ 
+Finished building: MDP_STM.hex
+ 
+Finished building: MDP_STM.list
+ 
