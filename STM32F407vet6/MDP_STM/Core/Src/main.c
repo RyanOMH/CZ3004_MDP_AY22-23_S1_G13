@@ -122,6 +122,8 @@ void gyroInit();
 void writeByte(uint8_t addr,uint8_t data);
 void readByte(uint8_t addr, uint8_t* data);
 void state_controller(Queue *q);
+void right_turn(int angle);
+void left_turn(int angle);
 
 
 /* USER CODE END PFP */
@@ -133,6 +135,7 @@ uint8_t aRxBuffer[20]; //Buffer of 20 bytes
 uint8_t ICM_ADDR = 0x68;
 uint8_t buff[20]; //Gyroscope buffer
 double total_angle = 0;
+double turning_angle = 0;
 uint8_t OLED_Row_0[20],OLED_Row_1[20],OLED_Row_2[20],OLED_Row_3[20],OLED_Row_4[20],OLED_Row_5[20];
 int pwm_L_f, pwm_L_b;
 int pwm_R_f, pwm_R_b;
@@ -677,7 +680,7 @@ void servomotor_center()
 void servomotor_left()
 {
 	// default: 110
-	uint32_t value = 110;
+	uint32_t value = 100;
 	if (htim1.Instance->CCR4 == value){
 			return;
 	}
@@ -820,6 +823,58 @@ void move(float distance, int frontorback , int leftorright)
 		}
 	}
 	HAL_Delay(100);
+}
+
+void right_turn(int angle)
+{
+	//Prep the servomotor to right
+	servomotor_right();
+
+	osDelay(250);
+
+	turning_angle = 0;
+	forward_motor_prep();
+	//Start the motor
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1000);
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1000);
+
+	while (turning_angle > -1*angle){ //while it is still turning to the correct angle
+		osDelay(10);
+	}
+
+
+	//Stop the Motor are completing the turn
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
+
+	servomotor_center();
+
+}
+
+void left_turn(int angle)
+{
+	//Prep the servomotor to left
+	servomotor_left();
+
+	osDelay(250);
+
+	turning_angle = 0;
+	forward_motor_prep();
+	//Start the motor
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1000);
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1000);
+
+	while (turning_angle < angle){ //while it is still turning to the correct angle
+		osDelay(10);
+	}
+
+
+	//Stop the Motor are completing the turn
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
+	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
+
+	servomotor_center();
+
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -968,7 +1023,7 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
-	process_UART_Rx();
+	//process_UART_Rx();
 	osDelay(100);
   }
   /* USER CODE END 5 */
@@ -1011,7 +1066,7 @@ void Motor(void *argument)
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_1); // MotorA
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_2); // MotorB
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4); // Servo Motor
-	motor_dir = 0; servo_dir = 0;
+	motor_dir = 1; servo_dir = 0;
 	forward_motor_prep();
 	servomotor_center();
 
@@ -1019,6 +1074,11 @@ void Motor(void *argument)
 	pwm_L_b = 500;
 	pwm_R_f = 500;
 	pwm_R_b = 500;
+
+	left_turn(90);
+	osDelay(500);
+	//right_turn(130);
+
 
 	struct PIDController motor_LF_PID, motor_RF_PID, motor_LB_PID, motor_RB_PID;
 
@@ -1185,6 +1245,7 @@ void gyro_task(void *argument)
   {
 	  uint8_t val[2] = {0, 0};
 	  int16_t angular_speed = 0;
+	  uint32_t T;
 
 	  uint32_t tick = 0;
 	  gyroInit();
@@ -1201,14 +1262,17 @@ void gyro_task(void *argument)
 	      readByte(0x37, val);
 	      angular_speed = (val[0] << 8) | val[1];
 
-	      total_angle += (double)(angular_speed) * ((HAL_GetTick() - tick) / 16400.0) * 1.42;
+	      T = HAL_GetTick() - tick;
+	      total_angle += (double)(angular_speed + 7.5) * ((HAL_GetTick() - tick) / 16400.0);
+	      turning_angle += (double)(angular_speed + 7.5) * ((HAL_GetTick() - tick) / 16400.0);
+
 
 	      // prevSpeed = angular_speed;
-	      if (total_angle >= 720)
+	      if (total_angle >= 360)
 	      {
 	        total_angle = 0;
 	      }
-	      if (total_angle <= -720)
+	      if (total_angle <= -360)
 	      {
 	        total_angle = 0;
 	      }
