@@ -122,6 +122,7 @@ void gyroInit();
 void writeByte(uint8_t addr,uint8_t data);
 void readByte(uint8_t addr, uint8_t* data);
 void state_controller(Queue *q);
+void prep_robot(char MDIR, char SDIR);
 void right_turn(int angle);
 void left_turn(int angle);
 
@@ -144,13 +145,12 @@ int motor_dir; //Backward = -1, Stop = 0, Forward = 1
 int servo_dir; //Left = -1, Center = 0, Right = 1
 //int angle_dir;
 int left_speed, right_speed;
-float leftwheel_dist = 0;
-float rightwheel_dist = 0;
-Queue command;
-int RX_FLAG;
+double leftwheel_dist = 0;
+double rightwheel_dist = 0;
+int RX_FLAG = 0;
 char RX_MOTOR;
 char RX_SERVO;
-int RX_DIST;
+int RX_MAG;
 /* USER CODE END 0 */
 
 /**
@@ -881,13 +881,18 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	/*Prevent unused argument(s) compilation warning*/
 	UNUSED(huart);
-	HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,3,0xFFFF);
+	char invalid[3] = {'X', 'X', 'X'};
 	if(RX_FLAG == 0){
 		RX_MOTOR = (char) aRxBuffer[0];
 		RX_SERVO = (char) aRxBuffer[1];
-		RX_DIST = (int) aRxBuffer[2];
+		RX_MAG = (int) aRxBuffer[2];
 		RX_FLAG = 1;
+		HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,3,0xFFFF);
 	}
+	else {
+		HAL_UART_Transmit(&huart3,(uint8_t *)invalid,3,0xFFFF);
+	}
+
 	HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,3);
 }
 
@@ -901,68 +906,106 @@ void send_UART(char*Tx_str)
 
 void process_UART_Rx()
 {
-	int i;
-
 	if (RX_FLAG == 1){
-		//Control motor direction
-		if (RX_MOTOR == 'F'){
-			if (motor_dir != 1){
-				forward_motor_prep();
-				motor_dir = 1;
-			}
-		}
-		else if (RX_MOTOR == 'B'){
-			if (motor_dir != -1){
-				backward_motor_prep();
-				motor_dir = -1;
-			}
-		}
-		else {
-			if (motor_dir != 0){
-				forward_motor_prep();
-				motor_dir = 0;
-			}
-		}
-		//Control servo direction
-		if (RX_SERVO == 'C'){
-			if (servo_dir != 0){
-				servomotor_center();
-				servo_dir = 0;
-			}
-		}
-		else if (RX_SERVO == 'L'){
-			if (servo_dir != -1){
-				servomotor_left();
-				servo_dir = -1;
-			}
-		}
-		else if (RX_SERVO == 'R'){
-			if (servo_dir != 1){
-				servomotor_right();
-				servo_dir = 1;
-			}
-		}
-		else {
-			if (servo_dir != 0){
-				servomotor_center();
-				servo_dir = 0;
-			}
-		}
-//		for(i=0;i<BUFFER_SIZE;i++)
-//		{
-//			aRxBuffer[i] = '\0';
-//		}
+		prep_robot(RX_MOTOR, RX_SERVO);
 		RX_FLAG = 0;
 	}
-
 }
 
 void state_controller (Queue *q) {
-	Cmd cur_command;
-	cur_command = q->ll.head->item;
+	Cmd cur_command, nxt_command;
+	uint8_t complete = 0;
+	double angle;
+	if (q->ll.head != NULL){
+		//Check if command can be extended
+		cur_command = q->ll.head->item;
+		if (q->ll.head->next != NULL){
+			nxt_command = q->ll.head->next->item;
+			if (cur_command.MOTOR_DIR == nxt_command.MOTOR_DIR && cur_command.SERVO_DIR == nxt_command.SERVO_DIR){
+				q->ll.head->item.MAGNITUDE += q->ll.head->next->item.MAGNITUDE;
+				removeNode(&(q->ll), 1);
+			}
+		}
+		//Check if robot has reached destination
+		cur_command = q->ll.head->item;
+		if (cur_command.SERVO_DIR == 'C'){
+			//Check if robot has reached magnitude based on distance
+			if (leftwheel_dist >= cur_command.MAGNITUDE || rightwheel_dist >= cur_command.MAGNITUDE){
+				complete = 1;
+			}
+		}
+		else if (cur_command.SERVO_DIR == 'L' || cur_command.SERVO_DIR == 'R'){
+			//Check if robot has reached magnitude based on angle
+			if (turning_angle < 0) angle = -turning_angle;
+			else angle = turning_angle;
+			if (angle >= cur_command.MAGNITUDE){
+				complete = 1;
+			}
+		}
+		else {
+			osDelay(5000);
+			complete = 1;
+		}
+	}
+	//Activate next command
+	if (complete == 1){
+		prep_robot('X','X');
+		dequeue(q);
+		turning_angle = 0;
+		leftwheel_dist = 0;
+		rightwheel_dist = 0;
+		osDelay(500);
+	}
+	if (q->ll.head != NULL){
+		cur_command = q->ll.head->item;
+		prep_robot(cur_command.MOTOR_DIR, cur_command.SERVO_DIR);
+	}
+}
 
-	if (leftwheel_dist >= cur_command.dist || rightwheel_dist >= cur_command.dist){
-
+void prep_robot(char MDIR, char SDIR){
+	//Control motor direction
+	if (MDIR == 'F'){
+		if (motor_dir != 1){
+			forward_motor_prep();
+			motor_dir = 1;
+		}
+	}
+	else if (MDIR == 'B'){
+		if (motor_dir != -1){
+			backward_motor_prep();
+			motor_dir = -1;
+		}
+	}
+	else {
+		if (motor_dir != 0){
+			forward_motor_prep();
+			motor_dir = 0;
+		}
+	}
+	//Control servo direction
+	if (SDIR == 'C'){
+		if (servo_dir != 0){
+			servomotor_center();
+			servo_dir = 0;
+		}
+	}
+	else if (SDIR == 'L'){
+		if (servo_dir != -1){
+			servomotor_left();
+			servo_dir = -1;
+		}
+	}
+	else if (SDIR == 'R'){
+		if (servo_dir != 1){
+			servomotor_right();
+			servo_dir = 1;
+		}
+	}
+	else {
+		if (servo_dir != 0){
+			servomotor_center();
+			servo_dir = 0;
+		}
 	}
 }
 
@@ -1019,11 +1062,28 @@ void readByte(uint8_t addr, uint8_t *data)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
+	Queue command;
+	queue_init(&command);
+	Cmd rx_command;
+	char test;
+//	uint32_t tick;
+//	tick = HAL_GetTick();
   /* Infinite loop */
   for(;;)
   {
-	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
-	//process_UART_Rx();
+	//Enqueue command if RX receives one
+	if (RX_FLAG == 1){
+		rx_command.MAGNITUDE = RX_MAG;
+		rx_command.MOTOR_DIR = RX_MOTOR;
+		rx_command.SERVO_DIR = RX_SERVO;
+		enqueue(&command, rx_command);
+		test = '0' + command.ll.size;
+		HAL_UART_Transmit(&huart3,(uint8_t *)&test,1,0xFFFF);
+		RX_FLAG = 0;
+	}
+  	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
+//  	process_UART_Rx();
+  	state_controller(&command);
 	osDelay(100);
   }
   /* USER CODE END 5 */
@@ -1066,7 +1126,7 @@ void Motor(void *argument)
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_1); // MotorA
 	HAL_TIM_PWM_Start(&htim8 , TIM_CHANNEL_2); // MotorB
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4); // Servo Motor
-	motor_dir = 1; servo_dir = 0;
+	motor_dir = 0; servo_dir = 0;
 	forward_motor_prep();
 	servomotor_center();
 
@@ -1075,8 +1135,8 @@ void Motor(void *argument)
 	pwm_R_f = 500;
 	pwm_R_b = 500;
 
-	left_turn(90);
-	osDelay(500);
+//	left_turn(90);
+//	osDelay(500);
 	//right_turn(130);
 
 
@@ -1145,13 +1205,10 @@ void encoder_task(void *argument)
   int dir_L, dir_R;
   int distInt_L = 0, distInt_R = 0;
 
-  float temp_leftwheel_dist = 0;
-  float temp_rightwheel_dist = 0;
-
   uint32_t tick, cur_tick, T;
   //number of ticks for one full rotation of wheel
-  float full_rotation_wheel = 1550;
-  float circumference_wheel = 21.3f;
+  double full_rotation_wheel = 1550;
+  double circumference_wheel = 21.3;
 
   left_prev = __HAL_TIM_GET_COUNTER(&htim2);
   right_prev = __HAL_TIM_GET_COUNTER(&htim3);
@@ -1219,6 +1276,8 @@ void encoder_task(void *argument)
 		  distInt_R += right_diff * dir_R;
 		  sprintf(OLED_Row_1, "DST L: %6d\0", distInt_L);
 		  sprintf(OLED_Row_2, "DST R: %6d\0", distInt_R);
+		  leftwheel_dist += (double)left_diff * (circumference_wheel/full_rotation_wheel);
+		  rightwheel_dist += (double)right_diff * (circumference_wheel/full_rotation_wheel);
 
 		  //Reset counters
 		  left_prev = __HAL_TIM_GET_COUNTER(&htim2);

@@ -7,8 +7,8 @@ void queue_init(Queue *q){
 	q->ll.tail = NULL;
 }
 
-void enqueue(Queue *q, Cmd item){
-   insertNode(&(q->ll), q->ll.size, item);
+int enqueue(Queue *q, Cmd item){
+   return insertNode(&(q->ll), q->ll.size, item);
 }
 
 Cmd dequeue(Queue *q){
@@ -50,15 +50,19 @@ int insertNode(LinkedList *ll, int index, Cmd value){
 
    ListNode *pre, *cur;
 
+   ListNode *node = malloc(sizeof(ListNode));
+   node->item.MAGNITUDE = value.MAGNITUDE;
+   node->item.MOTOR_DIR = value.MOTOR_DIR;
+   node->item.SERVO_DIR = value.SERVO_DIR;
+
    if (ll == NULL || index < 0 || index > ll->size + 1)
       return -1;
 
    // If empty list or inserting first node, need to update head pointer
    if (ll->head == NULL || index == 0){
       cur = ll->head;
-      ll->head = malloc(sizeof(ListNode));
+      ll->head = node;
       ll->tail = ll->head;
-      ll->head->item = value;
       ll->head->next = cur;
       ll->size++;
       return 0;
@@ -67,10 +71,9 @@ int insertNode(LinkedList *ll, int index, Cmd value){
    // Inserting as new last node
    if (index == ll->size){
       pre = ll->tail;
-      cur = pre->next;
-      pre->next = malloc(sizeof(ListNode));
+      cur = pre->next; //NULL
+      pre->next = node;
       ll->tail = pre->next;
-      pre->next->item = value;
       pre->next->next = cur;
       ll->size++;
       return 0;
@@ -80,12 +83,11 @@ int insertNode(LinkedList *ll, int index, Cmd value){
    // Create a new node and reconnect the links
    if ((pre = findNode(ll, index-1)) != NULL){
       cur = pre->next;
-      pre->next = malloc(sizeof(ListNode));
+      pre->next = node;
 
       if (index == ll->size)
          ll->tail = pre->next;
 
-      pre->next->item = value;
       pre->next->next = cur;
       ll->size++;
       return 0;

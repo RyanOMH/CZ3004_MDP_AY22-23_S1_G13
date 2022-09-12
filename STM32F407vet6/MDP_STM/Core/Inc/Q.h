@@ -7,8 +7,9 @@
 #define INC_Q_H_
 
 typedef struct _command{
-	int direction; // 0-ST,
-	int dist;
+	char MOTOR_DIR;
+	char SERVO_DIR;
+	int MAGNITUDE;
 } Cmd;
 
 typedef struct _listnode{
@@ -30,7 +31,7 @@ ListNode * findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, Cmd value);
 int removeNode(LinkedList *ll, int index);
 void queue_init(Queue *q);
-void enqueue(Queue *q, Cmd item);
+int enqueue(Queue *q, Cmd item);
 Cmd dequeue(Queue *q);
 int isEmptyQueue(Queue *s);
 
