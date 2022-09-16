@@ -24,14 +24,17 @@
 /* USER CODE BEGIN Includes */
 #include "oled.h"
 #include "PID.h"
-#include "Q.h"
 #include <stdio.h>
 #include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+typedef struct _command{
+	char MOTOR_DIR;
+	char SERVO_DIR;
+	int MAGNITUDE;
+} Cmd;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -120,36 +123,44 @@ void process_UART_Rx();
 void gyroInit();
 void writeByte(uint8_t addr,uint8_t data);
 void readByte(uint8_t addr, uint8_t* data);
-void state_controller(Queue *q);
+void state_controller(Cmd *command);
 void pid_controller();
 void prep_robot(char MDIR, char SDIR);
 void right_turn(int angle);
 void left_turn(int angle);
-
+void reset_trackers();
+int calc_progress(Cmd command);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+//UART Global Variables
 const int BUFFER_SIZE = 20;
 uint8_t aRxBuffer[20]; //Buffer of 20 bytes
+//Gyroscope Global Variables
 uint8_t ICM_ADDR = 0x68;
 uint8_t buff[20]; //Gyroscope buffer
 double total_angle = 0;
 double turning_angle = 0;
+//OLED Global Variables
 uint8_t OLED_Row_0[20],OLED_Row_1[20],OLED_Row_2[20],OLED_Row_3[20],OLED_Row_4[20],OLED_Row_5[20];
+//Motor Global Variables
 int pwmL = 0, pwmR = 0;
 int motor_dir; //Backward = -1, Stop = 0, Forward = 1
 int servo_dir; //Left = -1, Center = 0, Right = 1
-//int angle_dir;
+//Encoder Glober Variable
 int left_speed, right_speed;
 double leftwheel_dist = 0;
 double rightwheel_dist = 0;
+//State Control Global Variables
 int RX_FLAG = 0;
+int BUSY = 0;
 char RX_MOTOR;
 char RX_SERVO;
 int RX_MAG;
 int PID_DELAY = 0;
+char TX_STRING[5];
 /* USER CODE END 0 */
 
 /**
@@ -188,7 +199,7 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
-  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,3); //Receive 3 bytes
+  HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer, 5); //Receive 3 bytes
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -880,19 +891,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	/*Prevent unused argument(s) compilation warning*/
 	UNUSED(huart);
-	char invalid[3] = {'X', 'X', 'X'};
 	if(RX_FLAG == 0){
 		RX_MOTOR = (char) aRxBuffer[0];
 		RX_SERVO = (char) aRxBuffer[1];
-		RX_MAG = (int) aRxBuffer[2];
+		RX_MAG = ((int)(aRxBuffer[2] - '0') * 100) + ((int)(aRxBuffer[3] - '0') * 10) + ((int)(aRxBuffer[4] - '0'));
 		RX_FLAG = 1;
-		HAL_UART_Transmit(&huart3,(uint8_t *)aRxBuffer,3,0xFFFF);
 	}
-	else {
-		HAL_UART_Transmit(&huart3,(uint8_t *)invalid,3,0xFFFF);
-	}
-
-	HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,3);
+	HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,5);
 }
 
 void process_UART_Rx() //Keep for debugging purpose
@@ -903,49 +908,53 @@ void process_UART_Rx() //Keep for debugging purpose
 	}
 }
 
-void state_controller (Queue *q) {
-	Cmd cur_command;
+void state_controller (Cmd *command) {
 	uint8_t complete = 0;
 	double angle;
-	if (q->ll.head != NULL){
-		//Check if robot has reached destination
-		cur_command = q->ll.head->item;
-		if (cur_command.SERVO_DIR == 'C'){
-			//Check if robot has reached magnitude based on distance
-			if (leftwheel_dist >= cur_command.MAGNITUDE || rightwheel_dist >= cur_command.MAGNITUDE){
-				complete = 1;
-			}
-		}
-		else if (cur_command.SERVO_DIR == 'L' || cur_command.SERVO_DIR == 'R'){
-			//Check if robot has reached magnitude based on angle
-			if (turning_angle < 0) angle = -turning_angle;
-			else angle = turning_angle;
-			if (angle >= cur_command.MAGNITUDE){
-				complete = 1;
-			}
-		}
-		else {
-			osDelay(0.100 * q->ll.head->item.MAGNITUDE);
+	if (command->SERVO_DIR == 'C'){
+		//Check if robot has reached magnitude based on distance
+		if (leftwheel_dist >= command->MAGNITUDE || rightwheel_dist >= command->MAGNITUDE){
 			complete = 1;
 		}
 	}
-	//Activate next command
+	else if (command->SERVO_DIR == 'L' || command->SERVO_DIR == 'R'){
+		//Check if robot has reached magnitude based on angle
+		if (turning_angle < 0) angle = -turning_angle;
+		else angle = turning_angle;
+		if (angle >= command->MAGNITUDE){
+			complete = 1;
+		}
+	}
+	else {
+		osDelay(0.500 * command->MAGNITUDE);
+		complete = 1;
+	}
+	//Send complete
 	if (complete == 1){
-		prep_robot('X','X');
-		dequeue(q);
-		osDelay(500);
-	}
-	if (q->ll.head != NULL){
-		cur_command = q->ll.head->item;
-		prep_robot(cur_command.MOTOR_DIR, cur_command.SERVO_DIR);
-	}
-	else{
-		prep_robot('X','X');
+		command->MOTOR_DIR = 0; command->SERVO_DIR = 0; command->MAGNITUDE = 0;
+		TX_STRING[0] = 'C'; TX_STRING[1] = 'M'; TX_STRING[2] = 'P'; TX_STRING[3] = 'L'; TX_STRING[4] = 'T';
+		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+		BUSY = 0;
 	}
 }
 
 void prep_robot(char MDIR, char SDIR){
 	int state_change = 0;
+	//Control servo direction
+	if (SDIR == 'L'){
+		if (servo_dir != -1){
+			servomotor_left();
+			servo_dir = -1;
+			state_change = 1;
+		}
+	}
+	else if (SDIR == 'R'){
+		if (servo_dir != 1){
+			servomotor_right();
+			servo_dir = 1;
+			state_change = 1;
+		}
+	}
 	//Control motor direction
 	if (MDIR == 'F'){
 		if (motor_dir != 1){
@@ -966,9 +975,10 @@ void prep_robot(char MDIR, char SDIR){
 			forward_motor_prep();
 			motor_dir = 0;
 			state_change = 1;
+			osDelay(500);
 		}
 	}
-	//Control servo direction
+	//
 	if (SDIR == 'C'){
 		if (servo_dir != 0){
 			servomotor_center();
@@ -976,21 +986,7 @@ void prep_robot(char MDIR, char SDIR){
 			state_change = 1;
 		}
 	}
-	else if (SDIR == 'L'){
-		if (servo_dir != -1){
-			servomotor_left();
-			servo_dir = -1;
-			state_change = 1;
-		}
-	}
-	else if (SDIR == 'R'){
-		if (servo_dir != 1){
-			servomotor_right();
-			servo_dir = 1;
-			state_change = 1;
-		}
-	}
-	else {
+	else if (SDIR != 'L' && SDIR != 'R' && SDIR != 'C') {
 		if (servo_dir != 0){
 			servomotor_center();
 			servo_dir = 0;
@@ -998,12 +994,31 @@ void prep_robot(char MDIR, char SDIR){
 		}
 	}
 	//State changes
-	if (state_change == 1){
-		PID_DELAY = 1;
-		turning_angle = 0;
-		leftwheel_dist = 0;
-		rightwheel_dist = 0;
+	if (state_change == 1) reset_trackers();
+}
+
+void reset_trackers(){
+	PID_DELAY = 1;
+	turning_angle = 0;
+	leftwheel_dist = 0;
+	rightwheel_dist = 0;
+}
+
+int calc_progress(Cmd command){
+	double progress;
+	double angle;
+	if (command.SERVO_DIR == 'C') {
+		progress = (double)(leftwheel_dist + rightwheel_dist) / (2 * (double)command.MAGNITUDE);
 	}
+	else if (command.SERVO_DIR == 'L' || command.SERVO_DIR == 'R'){
+		if (turning_angle < 0) angle = -turning_angle;
+		else angle = turning_angle;
+		progress = angle / (double)command.MAGNITUDE;
+	}
+	else{
+		progress = 0;
+	}
+	return (int)(progress*1000);
 }
 
 void gyroInit()
@@ -1059,9 +1074,11 @@ void readByte(uint8_t addr, uint8_t *data)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-	Queue command;
-	queue_init(&command);
-	Cmd rx_command;
+	Cmd command;
+	int progress;
+	command.MOTOR_DIR = 0;
+	command.SERVO_DIR = 0;
+	command.MAGNITUDE = 0;
 	turning_angle = 0;
 	leftwheel_dist = 0;
 	rightwheel_dist = 0;
@@ -1071,23 +1088,47 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 	//Clear queue if XXX command received
-	if (RX_FLAG == 1 && RX_MAG == 'X' && RX_MOTOR == 'X' && RX_SERVO == 'X' ){
-		while (!isEmptyQueue(&command)){
-			dequeue(&command);
+	if (RX_FLAG == 1){
+		if (RX_MOTOR == 'X' && RX_SERVO == 'X'){
+			//May add a calculate progress function
+			progress = calc_progress(command); //return progress in XXX = XX.X%
+			command.MOTOR_DIR = 0;
+			command.SERVO_DIR = 0;
+			command.MAGNITUDE = 0;
+			//Acknowledge force stop
+			TX_STRING[0] = 'F'; TX_STRING[1] = 'S'; TX_STRING[2] = 'T'; TX_STRING[3] = 'O'; TX_STRING[4] = 'P';
+			HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+			reset_trackers();
+			BUSY = 0;
+		}
+		else {
+			if (BUSY == 0) {
+				command.MOTOR_DIR = RX_MOTOR;
+				command.SERVO_DIR = RX_SERVO;
+				command.MAGNITUDE = RX_MAG;
+				TX_STRING[0] = command.MOTOR_DIR; TX_STRING[1] = command.SERVO_DIR;
+				TX_STRING[2] = '_'; TX_STRING[3] = 'R'; TX_STRING[4] = 'X';
+				HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+				reset_trackers();
+				BUSY = 1;
+			}
+			else {
+				TX_STRING[0] = 'B'; TX_STRING[1] = 'U'; TX_STRING[2] = 'S'; TX_STRING[3] = 'Y'; TX_STRING[4] = '_';
+				HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+			}
 		}
 		RX_FLAG = 0;
 	}
-	//Enqueue command if RX receives one
-	if (RX_FLAG == 1){
-		rx_command.MAGNITUDE = RX_MAG;
-		rx_command.MOTOR_DIR = RX_MOTOR;
-		rx_command.SERVO_DIR = RX_SERVO;
-		enqueue(&command, rx_command);
-		RX_FLAG = 0;
-	}
   	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
-  	state_controller(&command);
+  	if (BUSY == 1) state_controller(&command);
 //  	process_UART_Rx();
+  	prep_robot(command.MOTOR_DIR, command.SERVO_DIR);
+  	if (progress != 0){
+  		//Transmit progress
+		TX_STRING[0] = 'P'; TX_STRING[1] = '='; TX_STRING[2] = '0'+((progress/100)%10); TX_STRING[3] = '0'+((progress/10)%10); TX_STRING[4] = '0'+((progress)%10);
+		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+		progress = 0;
+  	}
 	osDelay(100);
   }
   /* USER CODE END 5 */
