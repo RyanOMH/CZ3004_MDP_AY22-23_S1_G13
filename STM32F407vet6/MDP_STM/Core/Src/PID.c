@@ -20,9 +20,11 @@ void PIDController_Init(PIDController *pid) {
 
 void MotorPIDController_Init(PIDController *pid) {
   pid->T = 0.2;
-  pid->Kp = 0.11;
-  pid->Ki = 0.15;
-  pid->Kd = 0.03;
+//  pid->Kp = 0.11;
+//  pid->Ki = 0.15;
+//  pid->Kd = 0.03;
+  pid->Kp = 0.25;
+  pid->Ki = 0;
   pid->limMax = 6000; pid->limMin = 0;
   PIDController_Init(pid);
 }

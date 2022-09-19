@@ -52,6 +52,8 @@ I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim4;
+TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim8;
 
 UART_HandleTypeDef huart3;
@@ -91,6 +93,13 @@ const osThreadAttr_t gyroTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for UltraSoundTask */
+osThreadId_t UltraSoundTaskHandle;
+const osThreadAttr_t UltraSoundTask_attributes = {
+  .name = "UltraSoundTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -104,12 +113,14 @@ static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM4_Init(void);
+static void MX_TIM7_Init(void);
 void StartDefaultTask(void *argument);
 void show(void *argument);
 void Motor(void *argument);
 void encoder_task(void *argument);
 void gyro_task(void *argument);
-void PID(int var, int read, int goal);
+void ultrasound_task(void *argument);
 
 /* USER CODE BEGIN PFP */
 void forward_motor_prep();
@@ -130,6 +141,8 @@ void right_turn(int angle);
 void left_turn(int angle);
 void reset_trackers();
 int calc_progress(Cmd command);
+void HCSR04_Read (void);
+void delay_us(uint16_t us);
 
 /* USER CODE END PFP */
 
@@ -161,6 +174,11 @@ char RX_SERVO;
 int RX_MAG;
 int PID_DELAY = 0;
 char TX_STRING[5];
+uint32_t Echo_Val1 = 0;
+uint32_t Echo_Val2 = 0;
+uint32_t Difference = 0;
+uint8_t Is_First_Captured = 0;
+double ultra_Distance  = 0;
 /* USER CODE END 0 */
 
 /**
@@ -197,8 +215,11 @@ int main(void)
   MX_TIM3_Init();
   MX_USART3_UART_Init();
   MX_I2C1_Init();
+  MX_TIM4_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
+  HAL_TIM_Base_Start(&htim7); //start timer to use delay_ms function for ultrasonic task
   HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer, 5); //Receive 3 bytes
   /* USER CODE END 2 */
 
@@ -236,6 +257,9 @@ int main(void)
 
   /* creation of gyroTask */
   gyroTaskHandle = osThreadNew(gyro_task, NULL, &gyroTask_attributes);
+
+  /* creation of UltraSoundTask */
+  UltraSoundTaskHandle = osThreadNew(ultrasound_task, NULL, &UltraSoundTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -508,6 +532,102 @@ static void MX_TIM3_Init(void)
 }
 
 /**
+  * @brief TIM4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM4_Init(void)
+{
+
+  /* USER CODE BEGIN TIM4_Init 0 */
+
+  /* USER CODE END TIM4_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
+
+  /* USER CODE BEGIN TIM4_Init 1 */
+
+  /* USER CODE END TIM4_Init 1 */
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 16-1;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 65535;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim4, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM4_Init 2 */
+
+  /* USER CODE END TIM4_Init 2 */
+
+}
+
+/**
+  * @brief TIM7 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM7_Init(void)
+{
+
+  /* USER CODE BEGIN TIM7_Init 0 */
+
+  /* USER CODE END TIM7_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM7_Init 1 */
+
+  /* USER CODE END TIM7_Init 1 */
+  htim7.Instance = TIM7;
+  htim7.Init.Prescaler = 16-1;
+  htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim7.Init.Period = 65535;
+  htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM7_Init 2 */
+
+  /* USER CODE END TIM7_Init 2 */
+
+}
+
+/**
   * @brief TIM8 Initialization Function
   * @param None
   * @retval None
@@ -629,21 +749,23 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, OLED_SCL_Pin|OLED_SDA_Pin|OLED_RST_Pin|OLED_DC_Pin
-                          |LED_3_Pin, GPIO_PIN_RESET);
+                          |LED_3_Pin|Trig_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, AIN2_Pin|AIN1_Pin|BIN1_Pin|BIN2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : OLED_SCL_Pin OLED_SDA_Pin OLED_RST_Pin OLED_DC_Pin
-                           LED_3_Pin */
+                           LED_3_Pin Trig_Pin */
   GPIO_InitStruct.Pin = OLED_SCL_Pin|OLED_SDA_Pin|OLED_RST_Pin|OLED_DC_Pin
-                          |LED_3_Pin;
+                          |LED_3_Pin|Trig_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -921,7 +1043,7 @@ void state_controller (Cmd *command) {
 		//Check if robot has reached magnitude based on angle
 		if (turning_angle < 0) angle = -turning_angle;
 		else angle = turning_angle;
-		if (angle >= command->MAGNITUDE){
+		if (angle + 4 >= command->MAGNITUDE){
 			complete = 1;
 		}
 	}
@@ -1062,6 +1184,60 @@ void readByte(uint8_t addr, uint8_t *data)
   // Read 2 byte from z dir register
   HAL_I2C_Master_Receive(&hi2c1, ICM_ADDR<<1, data, 2, 20);
 }
+
+void delay_us(uint16_t us)
+{
+	__HAL_TIM_SET_COUNTER(&htim7,0);  // set the counter value a 0
+	while (__HAL_TIM_GET_COUNTER(&htim7) < us);  // wait for the counter to reach the us input in the parameter
+}
+
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)  // if the interrupt source is channel1
+	{
+		if (Is_First_Captured==0) // if the first value is not captured
+		{
+			Echo_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1); // read the first value
+			Is_First_Captured = 1;  // set the first captured as true
+			// Now change the polarity to falling edge
+			__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_FALLING);
+		}
+
+		else if (Is_First_Captured==1)   // if the first is already captured
+		{
+			Echo_Val2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);  // read second value
+			__HAL_TIM_SET_COUNTER(htim, 0);  // reset the counter
+
+			if (Echo_Val2 > Echo_Val1)
+			{
+				Difference = Echo_Val2-Echo_Val1;
+			}
+
+			else if (Echo_Val1 > Echo_Val2)
+			{
+				//Difference = (0xffff - Echo_Val1) + Echo_Val2;
+				Difference = 0;
+			}
+
+			ultra_Distance = (Difference * 0.0343)/2;
+			Is_First_Captured = 0; // set it back to false
+
+			// set polarity to rising edge
+			__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_RISING);
+			__HAL_TIM_DISABLE_IT(&htim4, TIM_IT_CC1);
+		}
+	}
+}
+
+void HCSR04_Read (void)
+{
+	HAL_GPIO_WritePin(Trig_GPIO_Port, Trig_Pin, GPIO_PIN_SET);  // pull the TRIG pin HIGH
+	delay_us(10);  // wait for 10 us
+	HAL_GPIO_WritePin(Trig_GPIO_Port, Trig_Pin, GPIO_PIN_RESET);  // pull the TRIG pin low
+
+	__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_CC1);
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -1075,7 +1251,7 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
 	Cmd command;
-	int progress;
+	int progress = 0;
 	command.MOTOR_DIR = 0;
 	command.SERVO_DIR = 0;
 	command.MAGNITUDE = 0;
@@ -1181,10 +1357,10 @@ void Motor(void *argument)
 
 	int pwm_L_f, pwm_L_b;
 	int pwm_R_f, pwm_R_b;
-	pwm_L_f = 1200;
-	pwm_L_b = 1200;
-	pwm_R_f = 1200;
-	pwm_R_b = 1200;
+	pwm_L_f = 700;
+	pwm_L_b = 700;
+	pwm_R_f = 700;
+	pwm_R_b = 700;
 
 //	left_turn(90);
 //	osDelay(500);
@@ -1219,11 +1395,11 @@ void Motor(void *argument)
 				//Start the motor
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_f);
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_f);
-				sprintf(OLED_Row_0, "FRWD\0");
+				//sprintf(OLED_Row_0, "FRWD\0");
 				//ADD PID CONTROL
 				if (pid_enable == 1){
-					pwm_L_f = MotorPIDController_Update(&motor_LF_PID, left_speed, 1500, pwm_L_f);
-					pwm_R_f = MotorPIDController_Update(&motor_RF_PID, right_speed, 1500, pwm_R_f);
+					pwm_L_f = PIDController_Update(&motor_LF_PID, left_speed, 1000, pwm_L_f);
+					pwm_R_f = PIDController_Update(&motor_RF_PID, right_speed, 1000, pwm_R_f);
 				}
 				pwmL = pwm_L_f;
 				pwmR = pwm_R_f;
@@ -1232,11 +1408,11 @@ void Motor(void *argument)
 				//Start the motor
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_b);
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_b);
-				sprintf(OLED_Row_0,"BKWD\0");
+				//sprintf(OLED_Row_0,"BKWD\0");
 				//ADD PID CONTROL
 				if (pid_enable == 1){
-					pwm_L_b = MotorPIDController_Update(&motor_LB_PID, left_speed, 1500, pwm_L_b);
-					pwm_R_b = MotorPIDController_Update(&motor_RB_PID, right_speed, 1500, pwm_R_b);
+					pwm_L_b = PIDController_Update(&motor_LB_PID, left_speed, 1000, pwm_L_b);
+					pwm_R_b = PIDController_Update(&motor_RB_PID, right_speed, 1000, pwm_R_b);
 				}
 				pwmL = pwm_L_b;
 				pwmR = pwm_R_b;
@@ -1244,7 +1420,7 @@ void Motor(void *argument)
 			else {
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
-				sprintf(OLED_Row_0,"STOP\0");
+				//sprintf(OLED_Row_0,"STOP\0");
 				pwmL = 0;
 				pwmR = 0;
 				pid_enable = 0;
@@ -1403,6 +1579,29 @@ void gyro_task(void *argument)
     osDelay(1);
   }
   /* USER CODE END gyro_task */
+}
+
+/* USER CODE BEGIN Header_ultrasound_task */
+/**
+* @brief Function implementing the UltraSoundTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_ultrasound_task */
+void ultrasound_task(void *argument)
+{
+  /* USER CODE BEGIN ultrasound_task */
+  /* Infinite loop */
+	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);
+  for(;;)
+  {
+	  HCSR04_Read();
+	  osDelay(10);
+	  sprintf(OLED_Row_0, "UDIST: %6d\0", (int)ultra_Distance);
+	  osDelay(200);
+	  //HAL_TIM_IC_Stop_IT(&htim4,TIM_CHANNEL_1);
+  }
+  /* USER CODE END ultrasound_task */
 }
 
 /**
