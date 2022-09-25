@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "string.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -130,6 +131,7 @@ void servomotor_left();
 void servomotor_right();
 void move(float distance , int frontorback, int leftorright);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void send_message(uint8_t * header, uint8_t * message);
 void process_UART_Rx();
 void gyroInit();
 void writeByte(uint8_t addr,uint8_t data);
@@ -173,7 +175,10 @@ char RX_MOTOR;
 char RX_SERVO;
 int RX_MAG;
 int PID_DELAY = 0;
-char TX_STRING[5];
+uint8_t TX_STRING[9];
+uint8_t UART_RPI[4] = {'R','P','I','|'};
+uint8_t UART_ALG[4] = {'A','L','G','|'};
+uint8_t UART_AND[4] = {'A','N','D','|'};
 uint32_t Echo_Val1 = 0;
 uint32_t Echo_Val2 = 0;
 uint32_t Difference = 0;
@@ -1022,6 +1027,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	HAL_UART_Receive_IT(&huart3,(uint8_t *)aRxBuffer,5);
 }
 
+void send_message(uint8_t * header, uint8_t * message){
+	uint8_t transmit[9];
+	int pos;
+	for (pos=0;pos<4;pos++) transmit[pos] = header[pos];
+	for (pos=0;pos<5;pos++) transmit[pos+4] = message[pos];
+	HAL_UART_Transmit_IT(&huart3,(uint8_t *)transmit,9);
+}
+
 void process_UART_Rx() //Keep for debugging purpose
 {
 	if (RX_FLAG == 1){
@@ -1054,8 +1067,10 @@ void state_controller (Cmd *command) {
 	//Send complete
 	if (complete == 1){
 		command->MOTOR_DIR = 0; command->SERVO_DIR = 0; command->MAGNITUDE = 0;
-		TX_STRING[0] = 'C'; TX_STRING[1] = 'M'; TX_STRING[2] = 'P'; TX_STRING[3] = 'L'; TX_STRING[4] = 'T';
-		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+		TX_STRING[0] = 'A'; TX_STRING[1] = 'L'; TX_STRING[2] = 'G'; TX_STRING[3] = '|';
+		TX_STRING[4] = 'C'; TX_STRING[5] = 'M'; TX_STRING[6] = 'P'; TX_STRING[7] = 'L'; TX_STRING[8] = 'T';
+		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
+//		send_message(UART_ALG, TX_STRING);
 		BUSY = 0;
 	}
 }
@@ -1272,8 +1287,10 @@ void StartDefaultTask(void *argument)
 			command.SERVO_DIR = 0;
 			command.MAGNITUDE = 0;
 			//Acknowledge force stop
-			TX_STRING[0] = 'F'; TX_STRING[1] = 'S'; TX_STRING[2] = 'T'; TX_STRING[3] = 'O'; TX_STRING[4] = 'P';
-			HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+//			TX_STRING[0] = 'A'; TX_STRING[1] = 'L'; TX_STRING[2] = 'G'; TX_STRING[3] = '|';
+//			TX_STRING[4] = 'F'; TX_STRING[5] = 'S'; TX_STRING[6] = 'T'; TX_STRING[7] = 'O'; TX_STRING[8] = 'P';
+//			HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
+//			send_message(UART_RPI, TX_STRING);
 			reset_trackers();
 			BUSY = 0;
 		}
@@ -1282,15 +1299,19 @@ void StartDefaultTask(void *argument)
 				command.MOTOR_DIR = RX_MOTOR;
 				command.SERVO_DIR = RX_SERVO;
 				command.MAGNITUDE = RX_MAG;
-				TX_STRING[0] = command.MOTOR_DIR; TX_STRING[1] = command.SERVO_DIR;
-				TX_STRING[2] = '_'; TX_STRING[3] = 'R'; TX_STRING[4] = 'X';
-				HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+//				TX_STRING[0] = 'R'; TX_STRING[1] = 'P'; TX_STRING[2] = 'I'; TX_STRING[3] = '|';
+//				TX_STRING[4] = command.MOTOR_DIR; TX_STRING[5] = command.SERVO_DIR;
+//				TX_STRING[6] = '_'; TX_STRING[7] = 'R'; TX_STRING[8] = 'X';
+//				HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
+//				send_message(UART_RPI, TX_STRING);
 				reset_trackers();
 				BUSY = 1;
 			}
 			else {
-				TX_STRING[0] = 'B'; TX_STRING[1] = 'U'; TX_STRING[2] = 'S'; TX_STRING[3] = 'Y'; TX_STRING[4] = '_';
-				HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+				TX_STRING[0] = 'R'; TX_STRING[1] = 'P'; TX_STRING[2] = 'I'; TX_STRING[3] = '|';
+				TX_STRING[4] = 'B'; TX_STRING[5] = 'U'; TX_STRING[6] = 'S'; TX_STRING[7] = 'Y'; TX_STRING[8] = '_';
+				HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
+//				send_message(UART_RPI, TX_STRING);
 			}
 		}
 		RX_FLAG = 0;
@@ -1301,8 +1322,10 @@ void StartDefaultTask(void *argument)
   	prep_robot(command.MOTOR_DIR, command.SERVO_DIR);
   	if (progress != 0){
   		//Transmit progress
-		TX_STRING[0] = 'P'; TX_STRING[1] = '='; TX_STRING[2] = '0'+((progress/100)%10); TX_STRING[3] = '0'+((progress/10)%10); TX_STRING[4] = '0'+((progress)%10);
-		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,5);
+  		TX_STRING[0] = 'A'; TX_STRING[1] = 'L'; TX_STRING[2] = 'G'; TX_STRING[3] = '|';
+		TX_STRING[4] = 'P'; TX_STRING[5] = '='; TX_STRING[6] = '0'+((progress/100)%10); TX_STRING[7] = '0'+((progress/10)%10); TX_STRING[8] = '0'+((progress)%10);
+		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
+		//		send_message(UART_RPI, TX_STRING);
 		progress = 0;
   	}
 	osDelay(100);
@@ -1359,8 +1382,11 @@ void Motor(void *argument)
 	int pwm_R_f, pwm_R_b;
 	pwm_L_f = 700;
 	pwm_L_b = 700;
-	pwm_R_f = 700;
-	pwm_R_b = 700;
+	pwm_R_f = 720;
+	pwm_R_b = 720;
+	int offset_L, offset_R;
+	int offset = 0;
+	double DEVIATION = 0;
 
 //	left_turn(90);
 //	osDelay(500);
@@ -1381,6 +1407,11 @@ void Motor(void *argument)
 	int pid_enable = 0;
 	for(;;)
 	{	if (HAL_GetTick() - tick > 100L){
+			//Calculate deviation
+//			if (servo_dir == 0){
+//				DEVIATION -= turning_angle * ((double)left_speed/(double)(HAL_GetTick()-tick));
+//				offset = DEVIATION/2;
+//			}
 			//Control PID enable
 			if (PID_DELAY == 1){
 				pid_time_start = HAL_GetTick();
@@ -1398,8 +1429,16 @@ void Motor(void *argument)
 				//sprintf(OLED_Row_0, "FRWD\0");
 				//ADD PID CONTROL
 				if (pid_enable == 1){
+//					if (servo_dir == 0){
+//						offset_R = 50*(turning_angle < 0);
+//						offset_L = 50*(turning_angle > 0);
+//					}
+//					else {
+//						offset_R = 0;
+//						offset_L = 0;
+//					}
 					pwm_L_f = PIDController_Update(&motor_LF_PID, left_speed, 1000, pwm_L_f);
-					pwm_R_f = PIDController_Update(&motor_RF_PID, right_speed, 1000, pwm_R_f);
+					pwm_R_f = PIDController_Update(&motor_RF_PID, right_speed, 1050, pwm_R_f);
 				}
 				pwmL = pwm_L_f;
 				pwmR = pwm_R_f;
@@ -1411,6 +1450,14 @@ void Motor(void *argument)
 				//sprintf(OLED_Row_0,"BKWD\0");
 				//ADD PID CONTROL
 				if (pid_enable == 1){
+//					if (servo_dir == 0){
+//						offset_R = 50*(turning_angle > 0);
+//						offset_L = 50*(turning_angle < 0);
+//					}
+//					else {
+//						offset_R = 0;
+//						offset_L = 0;
+//					}
 					pwm_L_b = PIDController_Update(&motor_LB_PID, left_speed, 1000, pwm_L_b);
 					pwm_R_b = PIDController_Update(&motor_RB_PID, right_speed, 1000, pwm_R_b);
 				}
@@ -1451,7 +1498,7 @@ void encoder_task(void *argument)
 
   uint32_t tick, cur_tick, T;
   //number of ticks for one full rotation of wheel
-  double full_rotation_wheel = 1550;
+  double full_rotation_wheel = 1600;
   double circumference_wheel = 21.3;
 
   left_prev = __HAL_TIM_GET_COUNTER(&htim2);
@@ -1536,6 +1583,7 @@ void gyro_task(void *argument)
 {
   /* USER CODE BEGIN gyro_task */
   /* Infinite loop */
+	double offset = 7.85;
   for(;;)
   {
 	  uint8_t val[2] = {0, 0};
@@ -1558,8 +1606,8 @@ void gyro_task(void *argument)
 	      angular_speed = (val[0] << 8) | val[1];
 
 	      T = HAL_GetTick() - tick;
-	      total_angle += (double)(angular_speed + 7.5) * ((HAL_GetTick() - tick) / 16400.0);
-	      turning_angle += (double)(angular_speed + 7.5) * ((HAL_GetTick() - tick) / 16400.0);
+	      total_angle += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
+	      turning_angle += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
 
 
 	      // prevSpeed = angular_speed;
