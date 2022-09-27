@@ -1471,6 +1471,18 @@ void Motor(void *argument)
 				PWML = pwm_L_b/pwm_L_div;
 				PWMR = pwm_R_b/pwm_R_div;
 			}
+			else if (ultra_Distance <= 5L){ //avoid collision with the obstacle
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
+				PWML = 0;
+				PWMR = 0;
+				PID_ENABLE = 0;
+				//Stop the movement of the robot and send the current progress
+				//Pass the control over to StartDefaultTask()
+				RX_FLAG = 1;
+				RX_MOTOR = 'X';
+				RX_SERVO = 'X';
+			}
 			else {
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
