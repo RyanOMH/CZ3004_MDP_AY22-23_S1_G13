@@ -159,6 +159,7 @@ uint8_t ICM_ADDR = 0x68;
 uint8_t buff[20]; //Gyroscope buffer
 double TOTAL_ANGLE = 0;
 double TURNING_ANGLE = 0;
+double TARGET_ANGLE = 0;
 //OLED Global Variables
 uint8_t OLED_Row_0[20],OLED_Row_1[20],OLED_Row_2[20],OLED_Row_3[20],OLED_Row_4[20],OLED_Row_5[20];
 //Motor Global Variables
@@ -823,6 +824,7 @@ void servomotor_center()
 	if (htim1.Instance->CCR4 == value){
 		return;
 	}
+	htim1.Instance->CCR4 = 100;
 	htim1.Instance->CCR4 = value;
 	osDelay(500);
 }
@@ -840,8 +842,8 @@ void servomotor_left()
 
 void servomotor_right()
 {
-	// default: 200
-	uint32_t value = 200;
+	// default: 220
+	uint32_t value = 220;
 	if (htim1.Instance->CCR4 == value){
 			return;
 	}
@@ -1076,9 +1078,9 @@ void state_controller (Cmd *command) {
 		//Check if robot has reached magnitude based on angle
 		if (TURNING_ANGLE < 0) angle = -TURNING_ANGLE;
 		else angle = TURNING_ANGLE;
-		if (angle + 4 >= command->MAGNITUDE){
-			complete = 1;
-		}
+		if (angle + 9 >= command->MAGNITUDE) complete = 1;
+//		if (TURNING_ANGLE > 5)	if (TOTAL_ANGLE +6 >= TARGET_ANGLE) complete = 1;
+//		if (TURNING_ANGLE < -5)	if (TOTAL_ANGLE -6 <= TARGET_ANGLE) complete = 1;
 	}
 	else {
 		osDelay(0.500 * command->MAGNITUDE);
@@ -1165,6 +1167,8 @@ void reset_trackers(){
 	DEVIATION = 0;
 	LEFTWHEEL_DIST = 0;
 	RIGHTWHEEL_DIST = 0;
+	while (TARGET_ANGLE > 180) { TARGET_ANGLE -= 360; TOTAL_ANGLE -= 360; }
+	while (TARGET_ANGLE < -180) { TARGET_ANGLE +=360; TOTAL_ANGLE += 360; }
 }
 
 int calc_progress(Cmd command){
@@ -1320,6 +1324,16 @@ void StartDefaultTask(void *argument)
 				command.MOTOR_DIR = RX_MOTOR;
 				command.SERVO_DIR = RX_SERVO;
 				command.MAGNITUDE = RX_MAG;
+				if (command.MOTOR_DIR == 'F' && command.SERVO_DIR != 'C'){
+					if (command.SERVO_DIR == 'L') TARGET_ANGLE += command.MAGNITUDE;
+					if (command.SERVO_DIR == 'R') TARGET_ANGLE -= command.MAGNITUDE;
+				}
+				else if (command.MOTOR_DIR == 'B' && command.SERVO_DIR != 'C'){
+					if (command.SERVO_DIR == 'L') TARGET_ANGLE -= command.MAGNITUDE;
+					if (command.SERVO_DIR == 'R') TARGET_ANGLE += command.MAGNITUDE;
+				}
+				if (TARGET_ANGLE >= 720) TARGET_ANGLE -= 720;
+				if (TARGET_ANGLE <= -720) TARGET_ANGLE += 720;
 				reset_trackers();
 				BUSY = 1;
 			}
@@ -1359,10 +1373,11 @@ void show(void *argument)
   /* USER CODE BEGIN show */
   /* Infinite loop */
 	for (;;){
-		sprintf(OLED_Row_1,"PWM L: %6d\0",PWML);
-		sprintf(OLED_Row_2,"PWM R: %6d\0",PWMR);
-		sprintf(OLED_Row_3,"SPD L: %6d\0",left_speed);
-		sprintf(OLED_Row_4,"SPD R: %6d\0",right_speed);
+//		sprintf(OLED_Row_1,"PWM L: %6d\0",PWML);
+//		sprintf(OLED_Row_2,"PWM R: %6d\0",PWMR);
+//		sprintf(OLED_Row_3,"SPD L: %6d\0",left_speed);
+//		sprintf(OLED_Row_4,"SPD R: %6d\0",right_speed);
+		sprintf(OLED_Row_4,"T ANG: %6d\0",(int)TARGET_ANGLE);
 		OLED_ShowString(10,0,OLED_Row_0); //Show motor state
 		OLED_ShowString(10,10,OLED_Row_1);
 		OLED_ShowString(10,20,OLED_Row_2);
@@ -1395,17 +1410,13 @@ void Motor(void *argument)
 	int pwm_L_f, pwm_L_b;
 	int pwm_R_f, pwm_R_b;
 	int pwm_L_div = 1, pwm_R_div = 1;
-	pwm_L_f = 1400;
-	pwm_L_b = 1400;
-	pwm_R_f = 1440;
-	pwm_R_b = 1440;
+	pwm_L_f = 1950;
+	pwm_L_b = 2050;
+	pwm_R_f = 2050;
+	pwm_R_b = 2100;
+	double deviation_angle;
 	double turning_prev = 0;
 	int offset = 0;
-
-//	left_turn(90);
-//	osDelay(500);
-	//right_turn(130);
-
 
 	struct PIDController motor_LF_PID, motor_RF_PID, motor_LB_PID, motor_RB_PID;
 
@@ -1428,18 +1439,20 @@ void Motor(void *argument)
 			else {pwm_L_div = 1; pwm_R_div = 1;}
 			//Calculate deviation
 			if (motor_dir != 0 && servo_dir == 0){
-				DEVIATION -= (TURNING_ANGLE+turning_prev)/2 * (((double)left_speed)*((double)(HAL_GetTick()-tick))/1000);
-				offset = (int)(DEVIATION/20);
-				if (offset >= 20) offset = 20;
-				if (offset <= -20) offset = -20;
-				turning_prev = TURNING_ANGLE;
+				deviation_angle = (((TOTAL_ANGLE-TARGET_ANGLE)+turning_prev)/2) * ((2*3.14159)/360);
+				DEVIATION -= deviation_angle * (((double)left_speed)*((double)(HAL_GetTick()-tick))/1000);
+				offset = (int)(DEVIATION);
+				if (offset >= 8) offset = 8;
+				if (offset <= -8) offset = -8;
+				turning_prev = (TOTAL_ANGLE-TARGET_ANGLE);
 			}
 			//Control PID enable
 			if (PID_DELAY == 1){
 				pid_time_start = HAL_GetTick();
 				PID_DELAY = 0;
+				turning_prev = 0;
 			}
-			if (PID_ENABLE == 0 && (HAL_GetTick() - pid_time_start > 500L)){
+			if (PID_ENABLE == 0 && (HAL_GetTick() - pid_time_start > 250L)){
 				PID_ENABLE = 1;
 			}
 			//Control motor
@@ -1450,8 +1463,8 @@ void Motor(void *argument)
 				//ADD PID CONTROL
 				if (PID_ENABLE == 1){
 					if (servo_dir == 0) servomotor_set(SERVO_CENTER-offset);
-					pwm_L_f = pwm_L_div*PIDController_Update(&motor_LF_PID, left_speed, 2000/pwm_L_div, pwm_L_f/pwm_L_div);
-					pwm_R_f = pwm_R_div*PIDController_Update(&motor_RF_PID, right_speed, 2000/pwm_R_div, pwm_R_f/pwm_R_div);
+					pwm_L_f = pwm_L_div*PIDController_Update(&motor_LF_PID, left_speed, 2500/pwm_L_div, pwm_L_f/pwm_L_div);
+					pwm_R_f = pwm_R_div*PIDController_Update(&motor_RF_PID, right_speed, 2500/pwm_R_div, pwm_R_f/pwm_R_div);
 				}
 				//display to OLED
 				PWML = pwm_L_f/pwm_L_div;
@@ -1464,32 +1477,21 @@ void Motor(void *argument)
 				//ADD PID CONTROL
 				if (PID_ENABLE == 1){
 					if (servo_dir == 0) servomotor_set(SERVO_CENTER+offset);
-					pwm_L_b = pwm_L_div*PIDController_Update(&motor_LB_PID, left_speed, 2000/pwm_L_div, pwm_L_b/pwm_L_div);
-					pwm_R_b = pwm_R_div*PIDController_Update(&motor_RB_PID, right_speed, 2000/pwm_R_div, pwm_R_b/pwm_R_div);
+					pwm_L_b = pwm_L_div*PIDController_Update(&motor_LB_PID, left_speed, 2500/pwm_L_div, pwm_L_b/pwm_L_div);
+					pwm_R_b = pwm_R_div*PIDController_Update(&motor_RB_PID, right_speed, 2500/pwm_R_div, pwm_R_b/pwm_R_div);
 				}
 				//Display to OLED
 				PWML = pwm_L_b/pwm_L_div;
 				PWMR = pwm_R_b/pwm_R_div;
 			}
-			else if (ultra_Distance <= 5L){ //avoid collision with the obstacle
-				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
-				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
-				PWML = 0;
-				PWMR = 0;
-				PID_ENABLE = 0;
-				//Stop the movement of the robot and send the current progress
-				//Pass the control over to StartDefaultTask()
-				RX_FLAG = 1;
-				RX_MOTOR = 'X';
-				RX_SERVO = 'X';
-			}
 			else {
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
-				//sprintf(OLED_Row_0,"STOP\0");
 				PWML = 0;
 				PWMR = 0;
 				PID_ENABLE = 0;
+				offset = 0;
+				turning_prev = TOTAL_ANGLE-TARGET_ANGLE;
 			}
 			tick = HAL_GetTick();
 		}
@@ -1524,7 +1526,7 @@ void encoder_task(void *argument)
   for(;;)
   {
 	  cur_tick = HAL_GetTick();
-	  if (cur_tick - tick > 100L){ //every 0.1 second
+	  if (cur_tick - tick > 100L){ //every 0.05 second
 		  left_curr = __HAL_TIM_GET_COUNTER(&htim2);
 		  right_curr = __HAL_TIM_GET_COUNTER(&htim3);
 		  //Left encoder
@@ -1600,6 +1602,7 @@ void gyro_task(void *argument)
   /* USER CODE BEGIN gyro_task */
   /* Infinite loop */
 	double offset = 7.85;
+	double angle;
   for(;;)
   {
 	  uint8_t val[2] = {0, 0};
@@ -1622,18 +1625,19 @@ void gyro_task(void *argument)
 	      angular_speed = (val[0] << 8) | val[1];
 
 	      T = HAL_GetTick() - tick;
-	      TOTAL_ANGLE += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
-	      TURNING_ANGLE += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
+	      angle = (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
+	      TOTAL_ANGLE += angle;
+	      TURNING_ANGLE += angle;
 
 
 	      // prevSpeed = angular_speed;
-	      if (TOTAL_ANGLE >= 360)
+	      if (TOTAL_ANGLE >= 720)
 	      {
-	        TOTAL_ANGLE = 0;
+	        TOTAL_ANGLE -= 720;
 	      }
-	      if (TOTAL_ANGLE <= -360)
+	      if (TOTAL_ANGLE <= -720)
 	      {
-	        TOTAL_ANGLE = 0;
+	        TOTAL_ANGLE += 720;
 	      }
 	      sprintf(OLED_Row_5, "ANGLE: %6d\0", (int)(TOTAL_ANGLE));
 
@@ -1661,7 +1665,20 @@ void ultrasound_task(void *argument)
   {
 	  HCSR04_Read();
 	  osDelay(10);
+	  if (ultra_Distance > 40) ultra_Distance = -1;
 	  sprintf(OLED_Row_0, "UDIST: %6d\0", (int)ultra_Distance);
+	  if (motor_dir == 1 && ultra_Distance <= 10L && ultra_Distance > 0L){ //avoid collision with the obstacle
+			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
+			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
+			PWML = 0;
+			PWMR = 0;
+			PID_ENABLE = 0;
+			//Stop the movement of the robot and send the current progress
+			//Pass the control over to StartDefaultTask()
+			RX_FLAG = 1;
+			RX_MOTOR = 'X';
+			RX_SERVO = 'X';
+		}
 	  osDelay(200);
 	  //HAL_TIM_IC_Stop_IT(&htim4,TIM_CHANNEL_1);
   }
