@@ -129,6 +129,7 @@ void backward_motor_prep();
 void servomotor_center();
 void servomotor_left();
 void servomotor_right();
+void servomotor_set(int value);
 void move(float distance , int frontorback, int leftorright);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void send_message(uint8_t * header, uint8_t * message);
@@ -156,34 +157,46 @@ uint8_t aRxBuffer[20]; //Buffer of 20 bytes
 //Gyroscope Global Variables
 uint8_t ICM_ADDR = 0x68;
 uint8_t buff[20]; //Gyroscope buffer
-double total_angle = 0;
-double turning_angle = 0;
+double TOTAL_ANGLE = 0;
+double TURNING_ANGLE = 0;
 //OLED Global Variables
 uint8_t OLED_Row_0[20],OLED_Row_1[20],OLED_Row_2[20],OLED_Row_3[20],OLED_Row_4[20],OLED_Row_5[20];
 //Motor Global Variables
-int pwmL = 0, pwmR = 0;
+int PWML, PWMR;
 int motor_dir; //Backward = -1, Stop = 0, Forward = 1
-int servo_dir; //Left = -1, Center = 0, Right = 1
 //Encoder Glober Variable
 int left_speed, right_speed;
-double leftwheel_dist = 0;
-double rightwheel_dist = 0;
-//State Control Global Variables
-int RX_FLAG = 0;
-int BUSY = 0;
+double LEFTWHEEL_DIST = 0;
+double RIGHTWHEEL_DIST = 0;
+//Servo Global Variables
+int servo_dir; //Left = -1, Center = 0, Right = 1
+int SERVO_CENTER = 150;
+int SERVO_LEFTMAX = 100;
+int SERVO_RIGHTMAX = 210;
+int SERVO_CURRENT;
+//State Control & PID Global Variables
+int RX_FLAG = 0; //Signals when RX message received
+int BUSY = 0; //Tracks when a command is being processed
+int PID_DELAY = 0; //Delay PID for 500ms
+int PID_ENABLE = 0; //PID on/off
+double DEVIATION = 0; //Deviation angle
 char RX_MOTOR;
 char RX_SERVO;
 int RX_MAG;
-int PID_DELAY = 0;
-uint8_t TX_STRING[9];
+//UART Global Variables
+uint8_t TX_STRING[9]; //9 bytes to transfer (Header + 5 Byte message)
 uint8_t UART_RPI[4] = {'R','P','I','|'};
 uint8_t UART_ALG[4] = {'A','L','G','|'};
 uint8_t UART_AND[4] = {'A','N','D','|'};
+//Ultrasound Global Variables
 uint32_t Echo_Val1 = 0;
 uint32_t Echo_Val2 = 0;
 uint32_t Difference = 0;
 uint8_t Is_First_Captured = 0;
-double ultra_Distance  = 0;
+double ultra_Distance  = 0; //Ultrasound distance
+//Nmber of ticks for one full rotation of wheel
+double full_rotation_wheel = 1600;
+double circumference_wheel = 21.3;
 /* USER CODE END 0 */
 
 /**
@@ -816,7 +829,7 @@ void servomotor_center()
 
 void servomotor_left()
 {
-	// default: 110
+	// default: 100
 	uint32_t value = 100;
 	if (htim1.Instance->CCR4 == value){
 			return;
@@ -827,8 +840,19 @@ void servomotor_left()
 
 void servomotor_right()
 {
-	// default: 210
-	uint32_t value = 210;
+	// default: 200
+	uint32_t value = 200;
+	if (htim1.Instance->CCR4 == value){
+			return;
+	}
+	htim1.Instance->CCR4 = value;
+	osDelay(500);
+}
+
+void servomotor_set(int value)
+{
+	if (value >= 200) value = 200;
+	if (value <= 100) value = 100;
 	if (htim1.Instance->CCR4 == value){
 			return;
 	}
@@ -844,8 +868,8 @@ void move(float distance, int frontorback , int leftorright) //Keep for debuggin
 	int flag = 1;
 
 	//distance of the left & right wheel travelled
-	float leftwheel_dist = 0;
-	float rightwheel_dist = 0;
+	float LEFTWHEEL_DIST = 0;
+	float RIGHTWHEEL_DIST = 0;
 	float temp_leftwheel_dist = 0;
 	float temp_rightwheel_dist = 0;
 
@@ -937,22 +961,18 @@ void move(float distance, int frontorback , int leftorright) //Keep for debuggin
 					diff_right = (65535 - right_encoder_prev);
 				}
 			}
-//			sprintf(hello,"SpeedL:%5d\0",diff_left);
-//			OLED_ShowString(10,20,hello);
-//			sprintf(hello1,"SpeedR:%5d\0",diff_right);
-//			OLED_ShowString(10,30,hello1);
 			left_encoder_prev = __HAL_TIM_GET_COUNTER(&htim2);
 			right_encoder_prev = __HAL_TIM_GET_COUNTER(&htim3);
 			start_time = HAL_GetTick(); //tick value in milliseconds
 
 			//Calculate the distance covered and compare with distance we input
 			temp_leftwheel_dist = ((float)diff_left/full_rotation_wheel) * circumference_wheel;
-			leftwheel_dist += temp_leftwheel_dist;
+			LEFTWHEEL_DIST += temp_leftwheel_dist;
 
 			temp_rightwheel_dist = ((float)diff_right/full_rotation_wheel) * circumference_wheel;
-			rightwheel_dist += temp_rightwheel_dist;
+			RIGHTWHEEL_DIST += temp_rightwheel_dist;
 
-			if (leftwheel_dist >= distance || rightwheel_dist >= distance){ //stop condition
+			if (LEFTWHEEL_DIST >= distance || RIGHTWHEEL_DIST >= distance){ //stop condition
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
 				flag = 0;
@@ -969,13 +989,13 @@ void right_turn(int angle) //Keep for debugging purpose
 
 	osDelay(250);
 
-	turning_angle = 0;
+	TURNING_ANGLE = 0;
 	forward_motor_prep();
 	//Start the motor
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1000);
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1000);
 
-	while (turning_angle > -1*angle){ //while it is still turning to the correct angle
+	while (TURNING_ANGLE > -1*angle){ //while it is still turning to the correct angle
 		osDelay(10);
 	}
 
@@ -995,13 +1015,13 @@ void left_turn(int angle) //Keep for debugging purpose
 
 	osDelay(250);
 
-	turning_angle = 0;
+	TURNING_ANGLE = 0;
 	forward_motor_prep();
 	//Start the motor
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1000);
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1000);
 
-	while (turning_angle < angle){ //while it is still turning to the correct angle
+	while (TURNING_ANGLE < angle){ //while it is still turning to the correct angle
 		osDelay(10);
 	}
 
@@ -1048,14 +1068,14 @@ void state_controller (Cmd *command) {
 	double angle;
 	if (command->SERVO_DIR == 'C'){
 		//Check if robot has reached magnitude based on distance
-		if (leftwheel_dist >= command->MAGNITUDE || rightwheel_dist >= command->MAGNITUDE){
+		if (LEFTWHEEL_DIST >= command->MAGNITUDE || RIGHTWHEEL_DIST >= command->MAGNITUDE){
 			complete = 1;
 		}
 	}
 	else if (command->SERVO_DIR == 'L' || command->SERVO_DIR == 'R'){
 		//Check if robot has reached magnitude based on angle
-		if (turning_angle < 0) angle = -turning_angle;
-		else angle = turning_angle;
+		if (TURNING_ANGLE < 0) angle = -TURNING_ANGLE;
+		else angle = TURNING_ANGLE;
 		if (angle + 4 >= command->MAGNITUDE){
 			complete = 1;
 		}
@@ -1077,7 +1097,7 @@ void state_controller (Cmd *command) {
 
 void prep_robot(char MDIR, char SDIR){
 	int state_change = 0;
-	//Control servo direction
+	//Control servo direction L or R
 	if (SDIR == 'L'){
 		if (servo_dir != -1){
 			servomotor_left();
@@ -1109,25 +1129,29 @@ void prep_robot(char MDIR, char SDIR){
 	}
 	else {
 		if (motor_dir != 0){
+			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
+			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
 			forward_motor_prep();
 			motor_dir = 0;
 			state_change = 1;
 			osDelay(500);
 		}
 	}
-	//
-	if (SDIR == 'C'){
-		if (servo_dir != 0){
-			servomotor_center();
-			servo_dir = 0;
-			state_change = 1;
+	//Control servo direction C & PID fine control
+	if (PID_ENABLE == 0){
+		if (SDIR == 'C'){
+			if (servo_dir != 0){
+				servomotor_center();
+				servo_dir = 0;
+				state_change = 1;
+			}
 		}
-	}
-	else if (SDIR != 'L' && SDIR != 'R' && SDIR != 'C') {
-		if (servo_dir != 0){
-			servomotor_center();
-			servo_dir = 0;
-			state_change = 1;
+		else if (SDIR != 'L' && SDIR != 'R' && SDIR != 'C') {
+			if (servo_dir != 0){
+				servomotor_center();
+				servo_dir = 0;
+				state_change = 1;
+			}
 		}
 	}
 	//State changes
@@ -1136,20 +1160,22 @@ void prep_robot(char MDIR, char SDIR){
 
 void reset_trackers(){
 	PID_DELAY = 1;
-	turning_angle = 0;
-	leftwheel_dist = 0;
-	rightwheel_dist = 0;
+	PID_ENABLE = 0;
+	TURNING_ANGLE = 0;
+	DEVIATION = 0;
+	LEFTWHEEL_DIST = 0;
+	RIGHTWHEEL_DIST = 0;
 }
 
 int calc_progress(Cmd command){
 	double progress;
 	double angle;
 	if (command.SERVO_DIR == 'C') {
-		progress = (double)(leftwheel_dist + rightwheel_dist) / (2 * (double)command.MAGNITUDE);
+		progress = (double)(LEFTWHEEL_DIST + RIGHTWHEEL_DIST) / (2 * (double)command.MAGNITUDE);
 	}
 	else if (command.SERVO_DIR == 'L' || command.SERVO_DIR == 'R'){
-		if (turning_angle < 0) angle = -turning_angle;
-		else angle = turning_angle;
+		if (TURNING_ANGLE < 0) angle = -TURNING_ANGLE;
+		else angle = TURNING_ANGLE;
 		progress = angle / (double)command.MAGNITUDE;
 	}
 	else{
@@ -1270,9 +1296,9 @@ void StartDefaultTask(void *argument)
 	command.MOTOR_DIR = 0;
 	command.SERVO_DIR = 0;
 	command.MAGNITUDE = 0;
-	turning_angle = 0;
-	leftwheel_dist = 0;
-	rightwheel_dist = 0;
+	TURNING_ANGLE = 0;
+	LEFTWHEEL_DIST = 0;
+	RIGHTWHEEL_DIST = 0;
 //	uint32_t tick;
 //	tick = HAL_GetTick();
   /* Infinite loop */
@@ -1281,16 +1307,11 @@ void StartDefaultTask(void *argument)
 	//Clear queue if XXX command received
 	if (RX_FLAG == 1){
 		if (RX_MOTOR == 'X' && RX_SERVO == 'X'){
-			//May add a calculate progress function
+			//Force stop
 			progress = calc_progress(command); //return progress in XXX = XX.X%
 			command.MOTOR_DIR = 0;
 			command.SERVO_DIR = 0;
 			command.MAGNITUDE = 0;
-			//Acknowledge force stop
-//			TX_STRING[0] = 'A'; TX_STRING[1] = 'L'; TX_STRING[2] = 'G'; TX_STRING[3] = '|';
-//			TX_STRING[4] = 'F'; TX_STRING[5] = 'S'; TX_STRING[6] = 'T'; TX_STRING[7] = 'O'; TX_STRING[8] = 'P';
-//			HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
-//			send_message(UART_RPI, TX_STRING);
 			reset_trackers();
 			BUSY = 0;
 		}
@@ -1299,11 +1320,6 @@ void StartDefaultTask(void *argument)
 				command.MOTOR_DIR = RX_MOTOR;
 				command.SERVO_DIR = RX_SERVO;
 				command.MAGNITUDE = RX_MAG;
-//				TX_STRING[0] = 'R'; TX_STRING[1] = 'P'; TX_STRING[2] = 'I'; TX_STRING[3] = '|';
-//				TX_STRING[4] = command.MOTOR_DIR; TX_STRING[5] = command.SERVO_DIR;
-//				TX_STRING[6] = '_'; TX_STRING[7] = 'R'; TX_STRING[8] = 'X';
-//				HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
-//				send_message(UART_RPI, TX_STRING);
 				reset_trackers();
 				BUSY = 1;
 			}
@@ -1318,14 +1334,12 @@ void StartDefaultTask(void *argument)
 	}
   	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
   	if (BUSY == 1) state_controller(&command);
-//  	process_UART_Rx();
   	prep_robot(command.MOTOR_DIR, command.SERVO_DIR);
   	if (progress != 0){
   		//Transmit progress
   		TX_STRING[0] = 'A'; TX_STRING[1] = 'L'; TX_STRING[2] = 'G'; TX_STRING[3] = '|';
 		TX_STRING[4] = 'P'; TX_STRING[5] = '='; TX_STRING[6] = '0'+((progress/100)%10); TX_STRING[7] = '0'+((progress/10)%10); TX_STRING[8] = '0'+((progress)%10);
 		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
-		//		send_message(UART_RPI, TX_STRING);
 		progress = 0;
   	}
 	osDelay(100);
@@ -1345,8 +1359,8 @@ void show(void *argument)
   /* USER CODE BEGIN show */
   /* Infinite loop */
 	for (;;){
-		sprintf(OLED_Row_1,"PWM L: %6d\0",pwmL);
-		sprintf(OLED_Row_2,"PWM R: %6d\0",pwmR);
+		sprintf(OLED_Row_1,"PWM L: %6d\0",PWML);
+		sprintf(OLED_Row_2,"PWM R: %6d\0",PWMR);
 		sprintf(OLED_Row_3,"SPD L: %6d\0",left_speed);
 		sprintf(OLED_Row_4,"SPD R: %6d\0",right_speed);
 		OLED_ShowString(10,0,OLED_Row_0); //Show motor state
@@ -1380,13 +1394,13 @@ void Motor(void *argument)
 
 	int pwm_L_f, pwm_L_b;
 	int pwm_R_f, pwm_R_b;
-	pwm_L_f = 700;
-	pwm_L_b = 700;
-	pwm_R_f = 720;
-	pwm_R_b = 720;
-	int offset_L, offset_R;
+	int pwm_L_div = 1, pwm_R_div = 1;
+	pwm_L_f = 1400;
+	pwm_L_b = 1400;
+	pwm_R_f = 1440;
+	pwm_R_b = 1440;
+	double turning_prev = 0;
 	int offset = 0;
-	double DEVIATION = 0;
 
 //	left_turn(90);
 //	osDelay(500);
@@ -1404,73 +1418,66 @@ void Motor(void *argument)
 	/* Infinite loop */
 	uint32_t tick = HAL_GetTick();
 	uint32_t pid_time_start = 0;
-	int pid_enable = 0;
 	for(;;)
 	{	if (HAL_GetTick() - tick > 100L){
+			//Calculate wheel speed change from turning
+			if (servo_dir != 0){
+				if (servo_dir == -1) {pwm_L_div = 2; pwm_R_div = 1;}
+				if (servo_dir == 1) {pwm_L_div = 1; pwm_R_div = 2;}
+			}
+			else {pwm_L_div = 1; pwm_R_div = 1;}
 			//Calculate deviation
-//			if (servo_dir == 0){
-//				DEVIATION -= turning_angle * ((double)left_speed/(double)(HAL_GetTick()-tick));
-//				offset = DEVIATION/2;
-//			}
+			if (motor_dir != 0 && servo_dir == 0){
+				DEVIATION -= (TURNING_ANGLE+turning_prev)/2 * (((double)left_speed)*((double)(HAL_GetTick()-tick))/1000);
+				offset = (int)(DEVIATION/20);
+				if (offset >= 20) offset = 20;
+				if (offset <= -20) offset = -20;
+				turning_prev = TURNING_ANGLE;
+			}
 			//Control PID enable
 			if (PID_DELAY == 1){
 				pid_time_start = HAL_GetTick();
-				pid_enable = 0;
 				PID_DELAY = 0;
 			}
-			if (pid_enable == 0 && (HAL_GetTick() - pid_time_start > 500L)){
-				pid_enable = 1;
+			if (PID_ENABLE == 0 && (HAL_GetTick() - pid_time_start > 500L)){
+				PID_ENABLE = 1;
 			}
 			//Control motor
 			if (motor_dir == 1){
 				//Start the motor
-				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_f);
-				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_f);
-				//sprintf(OLED_Row_0, "FRWD\0");
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_f/pwm_L_div);
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_f/pwm_R_div);
 				//ADD PID CONTROL
-				if (pid_enable == 1){
-//					if (servo_dir == 0){
-//						offset_R = 50*(turning_angle < 0);
-//						offset_L = 50*(turning_angle > 0);
-//					}
-//					else {
-//						offset_R = 0;
-//						offset_L = 0;
-//					}
-					pwm_L_f = PIDController_Update(&motor_LF_PID, left_speed, 1000, pwm_L_f);
-					pwm_R_f = PIDController_Update(&motor_RF_PID, right_speed, 1050, pwm_R_f);
+				if (PID_ENABLE == 1){
+					if (servo_dir == 0) servomotor_set(SERVO_CENTER-offset);
+					pwm_L_f = pwm_L_div*PIDController_Update(&motor_LF_PID, left_speed, 2000/pwm_L_div, pwm_L_f/pwm_L_div);
+					pwm_R_f = pwm_R_div*PIDController_Update(&motor_RF_PID, right_speed, 2000/pwm_R_div, pwm_R_f/pwm_R_div);
 				}
-				pwmL = pwm_L_f;
-				pwmR = pwm_R_f;
+				//display to OLED
+				PWML = pwm_L_f/pwm_L_div;
+				PWMR = pwm_R_f/pwm_R_div;
 			}
 			else if (motor_dir == -1){
 				//Start the motor
-				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_b);
-				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_b);
-				//sprintf(OLED_Row_0,"BKWD\0");
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwm_L_b/pwm_L_div);
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_b/pwm_R_div);
 				//ADD PID CONTROL
-				if (pid_enable == 1){
-//					if (servo_dir == 0){
-//						offset_R = 50*(turning_angle > 0);
-//						offset_L = 50*(turning_angle < 0);
-//					}
-//					else {
-//						offset_R = 0;
-//						offset_L = 0;
-//					}
-					pwm_L_b = PIDController_Update(&motor_LB_PID, left_speed, 1000, pwm_L_b);
-					pwm_R_b = PIDController_Update(&motor_RB_PID, right_speed, 1000, pwm_R_b);
+				if (PID_ENABLE == 1){
+					if (servo_dir == 0) servomotor_set(SERVO_CENTER+offset);
+					pwm_L_b = pwm_L_div*PIDController_Update(&motor_LB_PID, left_speed, 2000/pwm_L_div, pwm_L_b/pwm_L_div);
+					pwm_R_b = pwm_R_div*PIDController_Update(&motor_RB_PID, right_speed, 2000/pwm_R_div, pwm_R_b/pwm_R_div);
 				}
-				pwmL = pwm_L_b;
-				pwmR = pwm_R_b;
+				//Display to OLED
+				PWML = pwm_L_b/pwm_L_div;
+				PWMR = pwm_R_b/pwm_R_div;
 			}
 			else {
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
 				//sprintf(OLED_Row_0,"STOP\0");
-				pwmL = 0;
-				pwmR = 0;
-				pid_enable = 0;
+				PWML = 0;
+				PWMR = 0;
+				PID_ENABLE = 0;
 			}
 			tick = HAL_GetTick();
 		}
@@ -1497,9 +1504,6 @@ void encoder_task(void *argument)
   int distInt_L = 0, distInt_R = 0;
 
   uint32_t tick, cur_tick, T;
-  //number of ticks for one full rotation of wheel
-  double full_rotation_wheel = 1600;
-  double circumference_wheel = 21.3;
 
   left_prev = __HAL_TIM_GET_COUNTER(&htim2);
   right_prev = __HAL_TIM_GET_COUNTER(&htim3);
@@ -1559,8 +1563,8 @@ void encoder_task(void *argument)
 //		  distInt_R += right_diff * dir_R;
 //		  sprintf(OLED_Row_1, "DST L: %6d\0", distInt_L);
 //		  sprintf(OLED_Row_2, "DST R: %6d\0", distInt_R);
-		  leftwheel_dist += (double)left_diff * (circumference_wheel/full_rotation_wheel);
-		  rightwheel_dist += (double)right_diff * (circumference_wheel/full_rotation_wheel);
+		  LEFTWHEEL_DIST += (double)left_diff * (circumference_wheel/full_rotation_wheel);
+		  RIGHTWHEEL_DIST += (double)right_diff * (circumference_wheel/full_rotation_wheel);
 
 		  //Reset counters
 		  left_prev = __HAL_TIM_GET_COUNTER(&htim2);
@@ -1606,20 +1610,20 @@ void gyro_task(void *argument)
 	      angular_speed = (val[0] << 8) | val[1];
 
 	      T = HAL_GetTick() - tick;
-	      total_angle += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
-	      turning_angle += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
+	      TOTAL_ANGLE += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
+	      TURNING_ANGLE += (double)(angular_speed + offset) * ((HAL_GetTick() - tick) / 16400.0);
 
 
 	      // prevSpeed = angular_speed;
-	      if (total_angle >= 360)
+	      if (TOTAL_ANGLE >= 360)
 	      {
-	        total_angle = 0;
+	        TOTAL_ANGLE = 0;
 	      }
-	      if (total_angle <= -360)
+	      if (TOTAL_ANGLE <= -360)
 	      {
-	        total_angle = 0;
+	        TOTAL_ANGLE = 0;
 	      }
-	      sprintf(OLED_Row_5, "ANGLE: %6d\0", (int)(total_angle));
+	      sprintf(OLED_Row_5, "ANGLE: %6d\0", (int)(TOTAL_ANGLE));
 
 	      tick = HAL_GetTick();
 	    }
