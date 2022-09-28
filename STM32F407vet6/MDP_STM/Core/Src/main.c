@@ -181,6 +181,7 @@ int BUSY = 0; //Tracks when a command is being processed
 int PID_DELAY = 0; //Delay PID for 500ms
 int PID_ENABLE = 0; //PID on/off
 double DEVIATION = 0; //Deviation angle
+int ANGLE_OFFSET = 0; //Angle offset for straight movement
 char RX_MOTOR;
 char RX_SERVO;
 int RX_MAG;
@@ -824,7 +825,6 @@ void servomotor_center()
 	if (htim1.Instance->CCR4 == value){
 		return;
 	}
-	htim1.Instance->CCR4 = 100;
 	htim1.Instance->CCR4 = value;
 	osDelay(500);
 }
@@ -1070,7 +1070,7 @@ void state_controller (Cmd *command) {
 	double angle;
 	if (command->SERVO_DIR == 'C'){
 		//Check if robot has reached magnitude based on distance
-		if (LEFTWHEEL_DIST >= command->MAGNITUDE || RIGHTWHEEL_DIST >= command->MAGNITUDE){
+		if ((LEFTWHEEL_DIST + 5) >= command->MAGNITUDE || (RIGHTWHEEL_DIST + 5) >= command->MAGNITUDE){
 			complete = 1;
 		}
 	}
@@ -1377,6 +1377,8 @@ void show(void *argument)
 //		sprintf(OLED_Row_2,"PWM R: %6d\0",PWMR);
 //		sprintf(OLED_Row_3,"SPD L: %6d\0",left_speed);
 //		sprintf(OLED_Row_4,"SPD R: %6d\0",right_speed);
+		sprintf(OLED_Row_2,"OFFST: %6d\0",ANGLE_OFFSET);
+		sprintf(OLED_Row_3,"DEVIA: %6d\0",(int)DEVIATION);
 		sprintf(OLED_Row_4,"T ANG: %6d\0",(int)TARGET_ANGLE);
 		OLED_ShowString(10,0,OLED_Row_0); //Show motor state
 		OLED_ShowString(10,10,OLED_Row_1);
@@ -1416,7 +1418,7 @@ void Motor(void *argument)
 	pwm_R_b = 2100;
 	double deviation_angle;
 	double turning_prev = 0;
-	int offset = 0;
+	double deviation_prev = 0;
 
 	struct PIDController motor_LF_PID, motor_RF_PID, motor_LB_PID, motor_RB_PID;
 
@@ -1441,10 +1443,15 @@ void Motor(void *argument)
 			if (motor_dir != 0 && servo_dir == 0){
 				deviation_angle = (((TOTAL_ANGLE-TARGET_ANGLE)+turning_prev)/2) * ((2*3.14159)/360);
 				DEVIATION -= deviation_angle * (((double)left_speed)*((double)(HAL_GetTick()-tick))/1000);
-				offset = (int)(DEVIATION);
-				if (offset >= 8) offset = 8;
-				if (offset <= -8) offset = -8;
+				ANGLE_OFFSET = (int)(DEVIATION/3);
+//				if (ANGLE_OFFSET >= 20) ANGLE_OFFSET = 10;
+//				else if (ANGLE_OFFSET <= -20) ANGLE_OFFSET = -10;
+				if (ANGLE_OFFSET >= 5) ANGLE_OFFSET = 5;
+				if (ANGLE_OFFSET <= -5) ANGLE_OFFSET = -5;
+//				if (DEVIATION < 0 && DEVIATION > deviation_prev) ANGLE_OFFSET = -ANGLE_OFFSET;
+//				if (DEVIATION > 0 && DEVIATION < deviation_prev) ANGLE_OFFSET = -ANGLE_OFFSET;
 				turning_prev = (TOTAL_ANGLE-TARGET_ANGLE);
+				deviation_prev = DEVIATION;
 			}
 			//Control PID enable
 			if (PID_DELAY == 1){
@@ -1462,7 +1469,7 @@ void Motor(void *argument)
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_f/pwm_R_div);
 				//ADD PID CONTROL
 				if (PID_ENABLE == 1){
-					if (servo_dir == 0) servomotor_set(SERVO_CENTER-offset);
+					if (servo_dir == 0) servomotor_set(SERVO_CENTER-ANGLE_OFFSET);
 					pwm_L_f = pwm_L_div*PIDController_Update(&motor_LF_PID, left_speed, 2500/pwm_L_div, pwm_L_f/pwm_L_div);
 					pwm_R_f = pwm_R_div*PIDController_Update(&motor_RF_PID, right_speed, 2500/pwm_R_div, pwm_R_f/pwm_R_div);
 				}
@@ -1476,7 +1483,7 @@ void Motor(void *argument)
 				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm_R_b/pwm_R_div);
 				//ADD PID CONTROL
 				if (PID_ENABLE == 1){
-					if (servo_dir == 0) servomotor_set(SERVO_CENTER+offset);
+					if (servo_dir == 0) servomotor_set(SERVO_CENTER+ANGLE_OFFSET);
 					pwm_L_b = pwm_L_div*PIDController_Update(&motor_LB_PID, left_speed, 2500/pwm_L_div, pwm_L_b/pwm_L_div);
 					pwm_R_b = pwm_R_div*PIDController_Update(&motor_RB_PID, right_speed, 2500/pwm_R_div, pwm_R_b/pwm_R_div);
 				}
@@ -1490,8 +1497,9 @@ void Motor(void *argument)
 				PWML = 0;
 				PWMR = 0;
 				PID_ENABLE = 0;
-				offset = 0;
+				ANGLE_OFFSET = 0;
 				turning_prev = TOTAL_ANGLE-TARGET_ANGLE;
+				deviation_prev = 0;
 			}
 			tick = HAL_GetTick();
 		}
@@ -1667,7 +1675,7 @@ void ultrasound_task(void *argument)
 	  osDelay(10);
 	  if (ultra_Distance > 40) ultra_Distance = -1;
 	  sprintf(OLED_Row_0, "UDIST: %6d\0", (int)ultra_Distance);
-	  if (motor_dir == 1 && ultra_Distance <= 10L && ultra_Distance > 0L){ //avoid collision with the obstacle
+	  if (motor_dir == 1 && ultra_Distance <= 15L && ultra_Distance > 0L){ //avoid collision with the obstacle
 			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
 			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
 			PWML = 0;
