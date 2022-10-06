@@ -73,8 +73,9 @@ class Grid:
         # We do this by setting the limit to be GRID_CELL_LENGTH rather than ROBOT_SAFETY_DISTANCE
 
         # USE CODE BELOW FOR BORDERLESS ARENA:
-        # if ((pos.y < 0 or pos.y > GRID_LENGTH) or ((pos.x < 0 or pos.x > GRID_LENGTH ))):
-        if ((pos.y < 50 or (pos.y > GRID_LENGTH - 50))) or ((pos.x < 50 or (pos.x > GRID_LENGTH - 50))):
+         #if ((pos.y < 0 or pos.y > GRID_LENGTH) or ((pos.x < 0 or pos.x > GRID_LENGTH ))):
+        #if ((pos.y < 50 or (pos.y > GRID_LENGTH - 50))) or ((pos.x < 50 or (pos.x > GRID_LENGTH - 50))):
+        if ((pos.y < 0 or pos.y > GRID_LENGTH) or ((pos.x < 0 or pos.x > GRID_LENGTH ))):
             return False
         return True
 
