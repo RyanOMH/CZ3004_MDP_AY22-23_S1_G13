@@ -1188,7 +1188,7 @@ int calc_progress(Cmd command){
 		progress = angle / (double)command.MAGNITUDE;
 	}
 	else{
-		progress = 0;
+		progress = -1;
 	}
 	return (int)(progress*1000);
 }
@@ -1300,7 +1300,7 @@ void HCSR04_Read (void)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-	int progress = 0;
+	int progress = -1;
 	command.MOTOR_DIR = 0;
 	command.SERVO_DIR = 0;
 	command.MAGNITUDE = 0;
@@ -1316,6 +1316,7 @@ void StartDefaultTask(void *argument)
 	if (RX_FLAG == 1){
 		if (RX_MOTOR == 'X' && RX_SERVO == 'X'){
 			//Force stop
+			//Used to stop when the ultra sonic sensor is <= 40cm
 			progress = calc_progress(command); //return progress in XXX = XX.X%
 			command.MOTOR_DIR = 0;
 			command.SERVO_DIR = 0;
@@ -1353,12 +1354,13 @@ void StartDefaultTask(void *argument)
   	HAL_GPIO_TogglePin(GPIOE, LED_3_Pin);
   	if (BUSY == 1) state_controller(&command);
   	prep_robot(command.MOTOR_DIR, command.SERVO_DIR);
-  	if (progress != 0){
+  	//used to send complete command when the robot is ready and in position to take pic
+  	if (progress != -1){
   		//Transmit progress
   		TX_STRING[0] = 'A'; TX_STRING[1] = 'L'; TX_STRING[2] = 'G'; TX_STRING[3] = '|';
 		TX_STRING[4] = 'P'; TX_STRING[5] = '='; TX_STRING[6] = '0'+((progress/100)%10); TX_STRING[7] = '0'+((progress/10)%10); TX_STRING[8] = '0'+((progress)%10);
 		HAL_UART_Transmit_IT(&huart3,(uint8_t *)TX_STRING,9);
-		progress = 0;
+		progress = -1;
   	}
 	osDelay(100);
   }
@@ -1689,23 +1691,23 @@ void ultrasound_task(void *argument)
 	tick = HAL_GetTick();
 	for(;;)
 	{
-	  if (HAL_GetTick() - tick > 200L) {
+	  if (HAL_GetTick() - tick > 50L) {
 		  HCSR04_Read();
 		  osDelay(10);
-		  if (ultra_Distance > 40) ultra_Distance = -1;
+		  if (ultra_Distance > 50) ultra_Distance = -1;
 		  sprintf(OLED_Row_0, "UDIST: %6d\0", (int)ultra_Distance);
-	//	  if (motor_dir == 1 && ultra_Distance <= 15L && ultra_Distance > 2L){ //avoid collision with the obstacle
-	//			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
-	//			__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
-	//			PWML = 0;
-	//			PWMR = 0;
-	//			PID_ENABLE = 0;
-	//			//Stop the movement of the robot and send the current progress
-	//			//Pass the control over to StartDefaultTask()
-	//			RX_FLAG = 1;
-	//			RX_MOTOR = 'X';
-	//			RX_SERVO = 'X';
-	//	  }
+		  if (motor_dir == 1 && ultra_Distance <= 30L && ultra_Distance > 5L && RX_MAG >= 199){ //avoid collision with the obstacle
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
+				__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 0);
+				PWML = 0;
+				PWMR = 0;
+				PID_ENABLE = 0;
+				//Stop the movement of the robot and send the current progress
+				//Pass the control over to StartDefaultTask()
+				RX_FLAG = 1;
+				RX_MOTOR = 'X';
+				RX_SERVO = 'X';
+		  }
 		  tick = HAL_GetTick();
 	  }
 	  //HAL_TIM_IC_Stop_IT(&htim4,TIM_CHANNEL_1);
