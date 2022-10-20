@@ -1,0 +1,22 @@
+FUNCTIONS DECLARATION
+
+- System functions
+SystemClock_Config
+MX_GPIO_Init
+MX_TIM8_Init
+MX_TIM2_Init
+MX_TIM1_Init
+MX_TIM3_Init
+MX_USART3_UART_Init
+StartDefaultTask
+show
+Motor
+encoder_task
+
+- User functions
+forward_motor_prep
+backward_motor_prep
+servomotor_center
+servomotor_left
+servomotor_right
+move
